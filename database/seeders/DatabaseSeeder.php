@@ -44,6 +44,8 @@ class DatabaseSeeder extends Seeder
             $homeroomRole = Role::query()->where('name', 'wali_kelas')->firstOrFail();
             $teacherRole = Role::query()->where('name', 'guru')->firstOrFail();
 
+            DB::table('users')->update(['is_active' => true]);
+
             if (app()->environment('testing')) {
                 $this->seedTestingData($wakaRole, $bkRole, $homeroomRole, $teacherRole, $studentRole);
                 return;

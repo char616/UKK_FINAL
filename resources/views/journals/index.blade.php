@@ -671,10 +671,10 @@
                         SCHOOL CLASS PROGRESS
                     </div>
 
-                    <h2 class="hero-title">Dokumentasi Kegiatan Pembelajaran</h2>
+                    <h2 class="hero-title">Jurnal Mengajar</h2>
 
                     <p class="hero-description">
-                        Catat, dokumentasikan, dan pantau pelaksanaan kegiatan belajar mengajar harian beserta bukti lampiran foto atau berkas secara terpusat.
+                        Catat dan pantau kegiatan belajar mengajar.
                     </p>
                 </div>
 

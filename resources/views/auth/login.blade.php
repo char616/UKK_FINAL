@@ -377,7 +377,7 @@
 
                 <div class="auth-notice-line">
                     <i class="bi bi-info-circle"></i>
-                    <span>Silakan masukkan kredensial Anda untuk melanjutkan</span>
+                    <span>Masukkan ID dan password.</span>
                 </div>
 
                 @if($errors->any())
@@ -427,7 +427,6 @@
 
                     <!-- TOMBOL SUBMIT LOGIN -->
                     <button type="submit" class="btn-auth-primary">
-                        <i class="bi bi-box-arrow-in-right"></i>
                         <span>Login</span>
                     </button>
                 </form>

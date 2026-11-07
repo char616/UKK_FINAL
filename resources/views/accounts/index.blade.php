@@ -55,7 +55,7 @@
                         </h2>
 
                         <p class="hero-description">
-                            Buat akun baru untuk seluruh role civitas akademika, kelola hak akses login, dan atur status keaktifan akun pengguna secara terintegrasi.
+                            Buat dan perbarui akun pengguna sekolah.
                         </p>
                     </div>
 
@@ -69,7 +69,7 @@
             <div class="alert alert-info py-2.5 px-3 mb-4 small d-flex flex-wrap align-items-center justify-content-between gap-2 border-0 rounded-3" style="background: #eff6ff; color: #174ea6;">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-info-circle-fill fs-6"></i>
-                    <span><strong>Target akun aktif:</strong> 1 WAKA, Guru, Wali Kelas, BK, Siswa, dan Orang Tua.</span>
+                            <span><strong>Semua akun aktif otomatis.</strong></span>
                 </div>
                 <span class="badge bg-white text-primary border border-primary-subtle px-2.5 py-1">Kelas: 10, 11, 12 RPL 1 dan 2</span>
             </div>
@@ -132,8 +132,8 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="new-password" class="form-label">Password Sementara <span class="text-muted fw-normal">(Min. 12 Karakter)</span></label>
-                        <input id="new-password" type="password" name="password" class="form-control" minlength="12" autocomplete="new-password" required placeholder="Minimal 12 karakter...">
+                        <label for="new-password" class="form-label">Password Sementara <span class="text-muted fw-normal">(Minimal 6 karakter)</span></label>
+                        <input id="new-password" type="password" name="password" class="form-control" minlength="6" autocomplete="new-password" required placeholder="Minimal 6 karakter...">
                     </div>
                     <div class="col-md-4">
                         <label for="new-password-confirmation" class="form-label">Konfirmasi Password Sementara</label>
@@ -156,9 +156,32 @@
                     </div>
                     <div>
                         <h3 class="section-title">Daftar Akun Pengguna Terdaftar</h3>
-                        <p class="section-description">Kelola kredensial dan pembaruan profil pengguna.</p>
+                        <p class="section-description">Cari dan perbarui data akun pengguna.</p>
                     </div>
                 </div>
+
+                <form method="GET" action="{{ route('accounts.index') }}" class="row g-2 mb-4 align-items-end">
+                    <div class="col-md-6">
+                        <label for="account-search" class="form-label">Cari nama</label>
+                        <input id="account-search" name="search" value="{{ $search }}" class="form-control" placeholder="Masukkan nama pengguna">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="account-role" class="form-label">Jenis akun</label>
+                        <select id="account-role" name="role" class="form-select">
+                            <option value="">Semua akun</option>
+                            <option value="siswa" @selected($selectedRole === 'siswa')>Siswa</option>
+                            <option value="orang_tua" @selected($selectedRole === 'orang_tua')>Orang tua</option>
+                            <option value="guru" @selected($selectedRole === 'guru')>Guru</option>
+                            <option value="bk" @selected($selectedRole === 'bk')>BK</option>
+                            <option value="wali_kelas" @selected($selectedRole === 'wali_kelas')>Wali kelas</option>
+                            <option value="waka" @selected($selectedRole === 'waka')>WAKA</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button class="btn-primary-custom flex-grow-1" type="submit"><i class="bi bi-search"></i> Cari</button>
+                        <a class="btn-outline-custom" href="{{ route('accounts.index') }}" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a>
+                    </div>
+                </form>
 
                 <div class="table-responsive">
                     <table class="table" style="min-width: 860px;">
@@ -197,11 +220,7 @@
                                                 <span class="scp-badge scp-badge-warning" style="font-size: 9px; padding: 2px 6px;">Belum Verifikasi</span>
                                             @endif
 
-                                            @if($account->is_active)
-                                                <span class="scp-badge scp-badge-info" style="font-size: 9px; padding: 2px 6px;">Aktif</span>
-                                            @else
-                                                <span class="scp-badge scp-badge-danger" style="font-size: 9px; padding: 2px 6px;">Nonaktif</span>
-                                            @endif
+                                            <span class="scp-badge scp-badge-success" style="font-size: 9px; padding: 2px 6px;">Aktif</span>
                                         </div>
                                     </td>
                                     <td>
@@ -221,19 +240,12 @@
                                                 <input id="recovery-{{ $account->id }}" type="email" name="recovery_email" class="form-control form-control-sm" value="{{ $account->recovery_email }}" maxlength="255">
                                             </div>
                                             <div class="col-sm-6">
-                                                <label class="form-label text-muted mb-1 small" for="active-{{ $account->id }}">Status</label>
-                                                <select id="active-{{ $account->id }}" name="is_active" class="form-select form-select-sm" required>
-                                                    <option value="1" @selected($account->is_active)>Aktif</option>
-                                                    <option value="0" @selected(! $account->is_active)>Nonaktif</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6">
                                                 <label class="form-label text-muted mb-1 small" for="password-{{ $account->id }}">Password Baru (Opsional)</label>
-                                                <input id="password-{{ $account->id }}" type="password" name="password" class="form-control form-control-sm" minlength="12" autocomplete="new-password">
+                                                <input id="password-{{ $account->id }}" type="password" name="password" class="form-control form-control-sm" minlength="6" autocomplete="new-password">
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="form-label text-muted mb-1 small" for="password-confirmation-{{ $account->id }}">Ulangi Password</label>
-                                                <input id="password-confirmation-{{ $account->id }}" type="password" name="password_confirmation" class="form-control form-control-sm" minlength="12" autocomplete="new-password">
+                                                <input id="password-confirmation-{{ $account->id }}" type="password" name="password_confirmation" class="form-control form-control-sm" minlength="6" autocomplete="new-password">
                                             </div>
                                             <div class="col-12 pt-1 text-end">
                                                 <button type="submit" class="btn-outline-primary-custom btn-sm">

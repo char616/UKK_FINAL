@@ -49,12 +49,6 @@ class AuthController extends Controller
                 ->onlyInput('login_key');
         }
 
-        if (! $user->is_active) {
-            return back()
-                ->withErrors(['login_key' => 'Akun Anda tidak aktif. Silakan hubungi WAKA.'])
-                ->onlyInput('login_key');
-        }
-
         // Tentukan identitas aktif apakah login sebagai Siswa atau Orang Tua
         $loginAs = $user->role?->name;
         if (in_array($user->role?->name, ['siswa', 'orang_tua'], true)) {

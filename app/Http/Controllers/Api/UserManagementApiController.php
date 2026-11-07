@@ -78,7 +78,7 @@ class UserManagementApiController extends Controller
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'recovery_email' => ['nullable', 'email', 'max:255'],
             'role' => ['required', Rule::in(self::ROLE_NAMES), Rule::exists('roles', 'name')],
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $createdUser = DB::transaction(function () use ($request, $validated, $roleInput): User {
@@ -160,39 +160,16 @@ class UserManagementApiController extends Controller
             'parent_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'recovery_email' => ['nullable', 'email', 'max:255'],
-            'is_active' => ['required', 'boolean'],
-            'password' => ['nullable', 'string', 'min:12', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
-        $willBeActive = (bool) $validated['is_active'];
-        if (! $willBeActive && (int) $request->user()->id === (int) $user->id) {
-            return $this->errorResponse(
-                'Anda tidak dapat menonaktifkan akun sendiri.',
-                422,
-                ['is_active' => ['Anda tidak dapat menonaktifkan akun sendiri.']]
-            );
-        }
-
-        DB::transaction(function () use ($request, $validated, $user, $willBeActive): void {
+        DB::transaction(function () use ($request, $validated, $user): void {
             $roleName = optional($user->role)->name;
-            if (! $willBeActive && $roleName === 'waka') {
-                $activeWakaIds = User::where('is_active', true)
-                    ->whereHas('role', fn ($query) => $query->where('name', 'waka'))
-                    ->lockForUpdate()
-                    ->pluck('id');
-
-                if ($activeWakaIds->count() <= 1) {
-                    throw ValidationException::withMessages([
-                        'is_active' => 'Akun WAKA aktif terakhir tidak dapat dinonaktifkan.',
-                    ]);
-                }
-            }
-
             $attributes = [
                 'name' => trim($validated['name']),
                 'email' => trim($validated['email']),
                 'recovery_email' => ! empty($validated['recovery_email']) ? trim($validated['recovery_email']) : null,
-                'is_active' => $willBeActive,
+                'is_active' => true,
             ];
 
             if (in_array($roleName, ['guru', 'wali_kelas'], true) && $request->exists('nip')) {
@@ -240,14 +217,10 @@ class UserManagementApiController extends Controller
 
             $user->update($attributes);
 
-            if (! $willBeActive) {
-                $user->tokens()->delete();
-            }
-
             AuditLog::record(
                 $request->user()->id,
                 'UPDATE_USER',
-                'WAKA memperbarui akun pengguna ID ' . $user->id . ($willBeActive ? '' : ' dan menonaktifkannya')
+                'WAKA memperbarui akun pengguna ID ' . $user->id
             );
         });
 

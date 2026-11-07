@@ -360,7 +360,7 @@
                         <label for="password" class="form-label-custom">Kata Sandi Baru</label>
                         <div class="auth-password-group">
                             <i class="bi bi-lock input-icon-left"></i>
-                            <input type="password" class="form-control" id="password" name="password" minlength="12" placeholder="Minimal 12 karakter" required autocomplete="new-password">
+                            <input type="password" class="form-control" id="password" name="password" minlength="6" placeholder="Minimal 6 karakter" required autocomplete="new-password">
                             <button type="button" class="btn-toggle-eye" data-target="password" aria-label="Tampilkan sandi">
                                 <i class="bi bi-eye"></i>
                             </button>

@@ -178,7 +178,7 @@ class PasswordResetApiController extends Controller
         $validated = $request->validate([
             'login_key' => ['required', 'string', 'max:255'],
             'otp' => ['nullable', 'string', 'digits:6'],
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $user = $this->findUserByIdentifier(trim($validated['login_key']));

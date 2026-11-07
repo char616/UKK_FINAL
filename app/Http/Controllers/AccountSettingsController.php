@@ -27,7 +27,7 @@ class AccountSettingsController extends Controller
     {
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:12', 'confirmed', 'different:current_password'],
+            'password' => ['required', 'string', 'min:6', 'confirmed', 'different:current_password'],
         ]);
 
         $user = $request->user();

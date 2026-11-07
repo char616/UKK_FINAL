@@ -65,6 +65,17 @@
                     </div>
                 </div>
 
+                <form method="GET" action="{{ route('audit-logs.index') }}" class="row g-2 mb-4 align-items-end">
+                    <div class="col-md-4">
+                        <label for="audit-date" class="form-label">Tanggal</label>
+                        <input id="audit-date" type="date" name="date" value="{{ $date }}" class="form-control">
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button class="btn-primary-custom flex-grow-1" type="submit"><i class="bi bi-filter"></i> Tampilkan</button>
+                        <a class="btn-outline-custom" href="{{ route('audit-logs.index') }}" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a>
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -116,6 +127,8 @@
                     </table>
                 </div>
             </section>
+
+            <div class="d-flex justify-content-center mt-4">{{ $logs->links() }}</div>
 
         </div>
     </main>

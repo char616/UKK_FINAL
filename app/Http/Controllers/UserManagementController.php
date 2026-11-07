@@ -22,6 +22,7 @@ class UserManagementController extends Controller
     public function index(Request $request): View
     {
         $requestedRole = $request->query('role');
+        $search = trim((string) $request->query('search', ''));
         $selectedRole = is_string($requestedRole) && in_array($requestedRole, self::ROLE_NAMES, true)
             ? $requestedRole
             : null;
@@ -29,13 +30,24 @@ class UserManagementController extends Controller
         return view('accounts.index', [
             'user' => auth()->user(),
             'users' => User::with(['role', 'schoolClass'])
-                ->when($selectedRole, fn ($query) => $query->whereHas('role', fn ($roleQuery) => $roleQuery->where('name', $selectedRole)))
+                ->when($selectedRole, function ($query) use ($selectedRole): void {
+                    if ($selectedRole === 'orang_tua') {
+                        $query->whereNotNull('parent_name');
+                        return;
+                    }
+
+                    $query->whereHas('role', fn ($roleQuery) => $roleQuery->where('name', $selectedRole));
+                })
+                ->when($search !== '', function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%");
+                })
                 ->orderBy('name')
                 ->paginate(25)
                 ->withQueryString(),
             'roles' => Role::whereIn('name', ['waka', 'bk', 'wali_kelas', 'guru', 'siswa'])->orderBy('id')->get(),
             'classes' => Classes::orderBy('name')->get(),
             'selectedRole' => $selectedRole,
+            'search' => $search,
         ]);
     }
 
@@ -66,7 +78,7 @@ class UserManagementController extends Controller
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'recovery_email' => ['nullable', 'email', 'max:255'],
             'role' => ['required', Rule::in(self::ROLE_NAMES), Rule::exists('roles', 'name')],
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         DB::transaction(function () use ($validated, $roleInput): void {
@@ -140,35 +152,16 @@ class UserManagementController extends Controller
             'parent_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'recovery_email' => ['nullable', 'email', 'max:255'],
-            'is_active' => ['required', 'boolean'],
-            'password' => ['nullable', 'string', 'min:12', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
-        $willBeActive = (bool) $validated['is_active'];
-        if (! $willBeActive && (int) Auth::id() === (int) $user->id) {
-            return back()->withErrors(['is_active' => 'Anda tidak dapat menonaktifkan akun sendiri.'])->withInput();
-        }
-
-        DB::transaction(function () use ($request, $validated, $user, $willBeActive): void {
+        DB::transaction(function () use ($request, $validated, $user): void {
             $roleName = optional($user->role)->name;
-            if (! $willBeActive && $roleName === 'waka') {
-                $activeWakaIds = User::where('is_active', true)
-                    ->whereHas('role', fn ($query) => $query->where('name', 'waka'))
-                    ->lockForUpdate()
-                    ->pluck('id');
-
-                if ($activeWakaIds->count() <= 1) {
-                    throw ValidationException::withMessages([
-                        'is_active' => 'Akun WAKA aktif terakhir tidak dapat dinonaktifkan.',
-                    ]);
-                }
-            }
-
             $attributes = [
                 'name' => trim($validated['name']),
                 'email' => trim($validated['email']),
                 'recovery_email' => ! empty($validated['recovery_email']) ? trim($validated['recovery_email']) : null,
-                'is_active' => $willBeActive,
+                'is_active' => true,
             ];
 
             // Update NIP untuk Guru / Wali Kelas tanpa merusak relasi jadwal/presensi (karena relasi memakai users.id)
@@ -221,7 +214,7 @@ class UserManagementController extends Controller
             AuditLog::record(
                 Auth::id(),
                 'UPDATE_USER',
-                'WAKA memperbarui akun pengguna ID '.$user->id.($willBeActive ? '' : ' dan menonaktifkannya')
+                'WAKA memperbarui akun pengguna ID '.$user->id
             );
         });
 

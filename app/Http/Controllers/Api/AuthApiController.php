@@ -48,10 +48,6 @@ class AuthApiController extends Controller
             return $this->errorResponse('Login ID / NIP / NIS atau password salah.', 401);
         }
 
-        if (! $user->is_active) {
-            return $this->errorResponse('Akun Anda tidak aktif. Silakan hubungi WAKA.', 403);
-        }
-
         // Tentukan state flag saat login apakah login sebagai Siswa atau Orang Tua
         $loginAs = $user->role?->name;
         if (in_array($user->role?->name, ['siswa', 'orang_tua'], true)) {
@@ -115,7 +111,7 @@ class AuthApiController extends Controller
             'recovery_email' => ['nullable', 'email', 'max:255'],
             'role' => ['nullable', Rule::in(self::ALLOWED_REGISTER_ROLES)],
             'class_id' => ['nullable', 'integer', 'exists:classes,id'],
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
             'device_name' => ['nullable', 'string', 'max:100'],
         ]);
 

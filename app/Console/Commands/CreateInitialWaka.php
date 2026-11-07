@@ -63,7 +63,7 @@ class CreateInitialWaka extends Command
             'login_key' => ['required', 'string', 'max:255', 'unique:users,login_key'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'recovery_email' => ['nullable', 'email', 'max:255'],
-            'password' => ['required', 'string', 'min:12', 'same:password_confirmation'],
+            'password' => ['required', 'string', 'min:6', 'same:password_confirmation'],
             'password_confirmation' => ['required', 'string'],
         ]);
 

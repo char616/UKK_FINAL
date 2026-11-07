@@ -412,8 +412,8 @@
                                 <input id="current-password" type="password" name="current_password" class="form-control" autocomplete="current-password" required placeholder="Password lama...">
                             </div>
                             <div class="col-12">
-                                <label for="new-password" class="form-label">Password Baru <span class="text-muted fw-normal">(Min. 12 Karakter)</span></label>
-                                <input id="new-password" type="password" name="password" class="form-control" minlength="12" autocomplete="new-password" placeholder="Min. 12 karakter..." required>
+                                <label for="new-password" class="form-label">Password Baru <span class="text-muted fw-normal">(Minimal 6 karakter)</span></label>
+                                <input id="new-password" type="password" name="password" class="form-control" minlength="6" autocomplete="new-password" placeholder="Minimal 6 karakter..." required>
                             </div>
                             <div class="col-12">
                                 <label for="new-password-confirmation" class="form-label">Konfirmasi Password Baru</label>

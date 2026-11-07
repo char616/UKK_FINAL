@@ -215,7 +215,7 @@ class PasswordResetController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         if (! $this->hasValidVerifiedReset()) {

@@ -29,6 +29,10 @@ class AuditLogApiController extends Controller
             $query->where('user_id', (int) $request->query('user_id'));
         }
 
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', (string) $request->query('date'));
+        }
+
         $perPage = min(max((int) $request->query('per_page', 50), 1), 200);
         $paginator = $query->paginate($perPage);
 

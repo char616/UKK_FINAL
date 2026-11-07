@@ -425,6 +425,22 @@
 
             <section class="content-card mb-4">
                 <div class="section-header">
+                    <div class="section-icon"><i class="bi bi-bar-chart-fill"></i></div>
+                    <div>
+                        <h2 class="section-title">Infografis Pengguna</h2>
+                        <p class="section-description">Jumlah pengguna terdaftar.</p>
+                    </div>
+                </div>
+                <div class="row g-3 pt-2">
+                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Siswa</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_students'] }}</div></div></div>
+                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_teachers'] }}</div></div></div>
+                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Wali kelas</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_homeroom'] }}</div></div></div>
+                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">BK</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_bk'] }}</div></div></div>
+                </div>
+            </section>
+
+            <section class="content-card mb-4">
+                <div class="section-header">
                     <div class="section-icon">
                         <i class="bi bi-compass-fill"></i>
                     </div>
