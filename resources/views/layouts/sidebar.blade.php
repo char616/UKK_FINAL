@@ -905,6 +905,11 @@
 
     /* TABLET & MOBILE RESPONSIVE */
     @media (max-width: 991.98px) {
+        body.scp-sidebar-open {
+            overflow: hidden !important;
+            touch-action: none !important;
+        }
+
         .main-content,
         .master-main,
         .schedule-main,
@@ -916,7 +921,8 @@
             height: auto !important;
             min-height: calc(100vh - 64px) !important;
             margin-left: 0 !important;
-            padding: 88px 22px 32px !important;
+            padding: 84px 20px 32px !important;
+            overflow-y: visible !important;
         }
 
         .scp-mobile-header {
@@ -924,7 +930,7 @@
             top: 0 !important;
             right: 0 !important;
             left: 0 !important;
-            z-index: 1040 !important;
+            z-index: 1050 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
@@ -932,62 +938,112 @@
             padding: 9px 16px !important;
             background: #fff !important;
             border-bottom: 1px solid #e5eaf2 !important;
-            box-shadow: 0 3px 12px rgba(23,78,166,.05) !important;
+            box-shadow: 0 3px 12px rgba(23,78,166,.06) !important;
         }
 
         .scp-menu-toggle {
+            position: relative !important;
+            z-index: 1052 !important;
             display: inline-flex !important;
             align-items: center !important;
+            justify-content: center !important;
             gap: 8px !important;
-            padding: 9px 13px !important;
+            min-height: 40px !important;
+            padding: 8px 14px !important;
             border: 1px solid #bfdbfe !important;
-            border-radius: 9px !important;
+            border-radius: 10px !important;
             background: #eff6ff !important;
             color: #174ea6 !important;
             font-size: 13px !important;
             font-weight: 700 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        .scp-menu-toggle:active {
+            background: #dbeafe !important;
+            transform: scale(0.98) !important;
         }
 
         .scp-sidebar {
-            top: 64px !important;
+            position: fixed !important;
+            top: 0 !important;
             bottom: 0 !important;
             left: 0 !important;
-            width: min(280px, 86vw) !important;
-            height: calc(100dvh - 64px) !important;
-            padding: 16px !important;
+            z-index: 1065 !important;
+            width: min(290px, 86vw) !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            padding: 18px 16px 16px !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
             transform: translateX(-105%) !important;
             visibility: hidden !important;
-            transition: transform .22s ease, visibility .22s ease !important;
+            pointer-events: none !important;
+            transition: transform .24s cubic-bezier(0.4, 0, 0.2, 1), visibility .24s ease !important;
+            box-shadow: 8px 0 30px rgba(15, 23, 42, 0.18) !important;
         }
 
         .scp-sidebar.is-open {
             transform: translateX(0) !important;
             visibility: visible !important;
+            pointer-events: auto !important;
+        }
+
+        .scp-sidebar-nav {
+            flex: 1 1 auto !important;
+            min-height: 140px !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        .scp-sidebar .scp-sidebar-link {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
         .scp-menu-close {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 36px !important;
-            height: 36px !important;
+            flex: 0 0 38px !important;
+            width: 38px !important;
+            height: 38px !important;
             border: 1px solid #e5eaf2 !important;
-            border-radius: 8px !important;
-            background: white !important;
-            color: #64748b !important;
+            border-radius: 10px !important;
+            background: #f8fafc !important;
+            color: #475569 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        .scp-menu-close:hover,
+        .scp-menu-close:active {
+            background: #eff6ff !important;
+            border-color: #bfdbfe !important;
+            color: #174ea6 !important;
         }
 
         .scp-sidebar-backdrop {
             position: fixed !important;
-            inset: 64px 0 0 !important;
-            z-index: 1045 !important;
+            inset: 0 !important;
+            z-index: 1060 !important;
             display: block !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
             border: 0 !important;
-            background: rgba(15,23,42,.4) !important;
+            background: rgba(15, 23, 42, 0.45) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
-            transition: .2s ease !important;
+            transition: opacity .22s ease, visibility .22s ease !important;
         }
 
         .scp-sidebar-backdrop.is-visible {
@@ -1120,3 +1176,82 @@
         </form>
     @endif
 </aside>
+
+<script>
+    (function () {
+        const initScpSidebar = () => {
+            const sidebar = document.querySelector('[data-scp-sidebar]');
+            const backdrop = document.querySelector('[data-scp-sidebar-backdrop]');
+            const openButton = document.querySelector('[data-scp-sidebar-open]');
+            const closeButtons = document.querySelectorAll('[data-scp-sidebar-close]');
+
+            if (!sidebar || !backdrop || !openButton || sidebar.dataset.scpSidebarBound === 'true') {
+                return;
+            }
+
+            sidebar.dataset.scpSidebarBound = 'true';
+            let previouslyFocusedElement = null;
+            const mobileSidebar = window.matchMedia('(max-width: 991.98px)');
+            const openButtonIcon = openButton.querySelector('i');
+
+            const setOpen = (isOpen, restoreFocus = true) => {
+                sidebar.classList.toggle('is-open', isOpen);
+                backdrop.classList.toggle('is-visible', isOpen);
+                openButton.setAttribute('aria-expanded', String(isOpen));
+                sidebar.setAttribute('aria-hidden', String(!isOpen && mobileSidebar.matches));
+                document.body.classList.toggle('scp-sidebar-open', isOpen);
+                document.body.classList.toggle('overflow-hidden', isOpen);
+
+                if (openButtonIcon) {
+                    openButtonIcon.className = isOpen ? 'bi bi-x-lg' : 'bi bi-list';
+                }
+
+                if (isOpen) {
+                    previouslyFocusedElement = document.activeElement;
+                    sidebar.querySelector('.scp-sidebar-nav a')?.focus();
+                } else if (restoreFocus && previouslyFocusedElement instanceof HTMLElement) {
+                    previouslyFocusedElement.focus();
+                }
+            };
+
+            sidebar.setAttribute('aria-hidden', String(mobileSidebar.matches));
+
+            openButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setOpen(!sidebar.classList.contains('is-open'));
+            });
+
+            closeButtons.forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    setOpen(false);
+                });
+            });
+
+            sidebar.addEventListener('click', (event) => {
+                if (event.target.closest('a') && mobileSidebar.matches) {
+                    setOpen(false, false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && sidebar.classList.contains('is-open')) {
+                    setOpen(false);
+                }
+            });
+
+            if (typeof mobileSidebar.addEventListener === 'function') {
+                mobileSidebar.addEventListener('change', () => setOpen(false, false));
+            } else if (typeof mobileSidebar.addListener === 'function') {
+                mobileSidebar.addListener(() => setOpen(false, false));
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScpSidebar);
+        } else {
+            initScpSidebar();
+        }
+    })();
+</script>

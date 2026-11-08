@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.dataset.scpSidebarBound = 'true';
         let previouslyFocusedElement = null;
         const mobileSidebar = window.matchMedia('(max-width: 991.98px)');
+        const openButtonIcon = openButton.querySelector('i');
 
         const setOpen = (isOpen, restoreFocus = true) => {
             sidebar.classList.toggle('is-open', isOpen);
@@ -16,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.setAttribute('aria-hidden', String(!isOpen && mobileSidebar.matches));
             document.body.classList.toggle('scp-sidebar-open', isOpen);
             document.body.classList.toggle('overflow-hidden', isOpen);
+
+            if (openButtonIcon) {
+                openButtonIcon.className = isOpen ? 'bi bi-x-lg' : 'bi bi-list';
+            }
 
             if (isOpen) {
                 previouslyFocusedElement = document.activeElement;
@@ -26,8 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         sidebar.setAttribute('aria-hidden', String(mobileSidebar.matches));
-        openButton.addEventListener('click', () => setOpen(true));
-        closeButtons.forEach((button) => button.addEventListener('click', () => setOpen(false)));
+        openButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setOpen(!sidebar.classList.contains('is-open'));
+        });
+        closeButtons.forEach((button) => button.addEventListener('click', (event) => {
+            event.preventDefault();
+            setOpen(false);
+        }));
         sidebar.addEventListener('click', (event) => {
             if (event.target.closest('a') && mobileSidebar.matches) {
                 setOpen(false, false);

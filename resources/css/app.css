@@ -804,6 +804,15 @@ body:not(.scp-login-body) {
 @media (max-width: 991.98px) {
     .scp-sidebar {
         background: #ffffff !important;
+        z-index: 1065 !important;
+    }
+
+    .scp-sidebar-backdrop {
+        z-index: 1060 !important;
+    }
+
+    .scp-mobile-header {
+        z-index: 1050 !important;
     }
 }
 
@@ -820,6 +829,7 @@ body:not(.scp-login-body) {
 
     body.scp-sidebar-open {
         overflow: hidden !important;
+        touch-action: none !important;
     }
 
     .content-wrapper {
@@ -908,13 +918,17 @@ body:not(.scp-login-body) {
         padding-inline: 12px !important;
     }
 
-    .scp-mobile-header .scp-brand-copy {
-        display: none !important;
+    .scp-mobile-header .scp-brand-title {
+        font-size: 14px !important;
+    }
+
+    .scp-mobile-header .scp-brand-caption {
+        font-size: 9px !important;
     }
 
     .scp-menu-toggle {
-        min-height: 42px !important;
-        padding: 8px 11px !important;
+        min-height: 40px !important;
+        padding: 8px 12px !important;
     }
 
     .main-content,
