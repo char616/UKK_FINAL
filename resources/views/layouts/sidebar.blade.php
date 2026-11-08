@@ -1120,35 +1120,3 @@
         </form>
     @endif
 </aside>
-
-<script>
-(() => {
-    const sidebar = document.querySelector('[data-scp-sidebar]');
-    const openButton = document.querySelector('[data-scp-sidebar-open]');
-    const closeButtons = document.querySelectorAll('[data-scp-sidebar-close]');
-    const backdrop = document.querySelector('[data-scp-sidebar-backdrop]');
-
-    if (sidebar && openButton && backdrop) {
-        function openSidebar() {
-            sidebar.classList.add('is-open');
-            backdrop.classList.add('is-visible');
-            openButton.setAttribute('aria-expanded', 'true');
-        }
-
-        function closeSidebar() {
-            sidebar.classList.remove('is-open');
-            backdrop.classList.remove('is-visible');
-            openButton.setAttribute('aria-expanded', 'false');
-        }
-
-        openButton.addEventListener('click', openSidebar);
-        closeButtons.forEach(button => button.addEventListener('click', closeSidebar));
-        document.addEventListener('keydown', event => {
-            if (event.key === 'Escape') closeSidebar();
-        });
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 992) closeSidebar();
-        });
-    }
-})();
-</script>

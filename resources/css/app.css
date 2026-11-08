@@ -806,3 +806,193 @@ body:not(.scp-login-body) {
         background: #ffffff !important;
     }
 }
+
+/* ============================================================
+   MOBILE USABILITY LAYER
+   Shared rules for dashboard pages with page-level desktop styles.
+============================================================ */
+
+@media (max-width: 991.98px) {
+    html {
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body.scp-sidebar-open {
+        overflow: hidden !important;
+    }
+
+    .content-wrapper {
+        max-width: none;
+    }
+
+    .page-header,
+    .section-header,
+    .hero-content,
+    .toolbar,
+    .filter-bar,
+    .form-actions,
+    .action-buttons {
+        flex-wrap: wrap !important;
+    }
+
+    .page-header > *,
+    .section-header > *,
+    .hero-content > * {
+        min-width: 0;
+    }
+
+    .hero-text {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .hero-description,
+    .page-description {
+        overflow-wrap: anywhere;
+    }
+
+    .row {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .content-card,
+    .custom-card,
+    .card {
+        max-width: 100%;
+    }
+
+    .table-responsive {
+        max-width: 100%;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .table-responsive > .table {
+        min-width: 640px;
+    }
+
+    .btn,
+    button,
+    input,
+    select,
+    textarea {
+        touch-action: manipulation;
+    }
+
+    .btn,
+    button:not(.btn-close) {
+        min-height: 40px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .modal-dialog {
+        margin: .75rem;
+    }
+
+    .modal-content {
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .scp-mobile-header {
+        min-height: 60px !important;
+        padding-inline: 12px !important;
+    }
+
+    .scp-mobile-header .scp-brand-copy {
+        display: none !important;
+    }
+
+    .scp-menu-toggle {
+        min-height: 42px !important;
+        padding: 8px 11px !important;
+    }
+
+    .main-content,
+    .master-main,
+    .schedule-main,
+    .journal-main,
+    .audit-main,
+    .settings-main,
+    .accounts-main {
+        padding-right: 12px !important;
+        padding-left: 12px !important;
+    }
+
+    .page-title {
+        max-width: 100%;
+        font-size: 20px !important;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+
+    .academic-badge {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .hero-banner {
+        padding: 20px 16px !important;
+    }
+
+    .hero-title {
+        font-size: 19px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .scp-dashboard-links {
+        grid-template-columns: 1fr !important;
+    }
+
+    .content-card,
+    .custom-card {
+        padding: 16px 14px !important;
+        border-radius: 12px;
+    }
+
+    .section-header {
+        align-items: flex-start !important;
+    }
+
+    .section-icon {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .btn,
+    button:not(.btn-close) {
+        min-height: 42px;
+    }
+
+    .form-actions,
+    .action-buttons,
+    .toolbar .btn,
+    .filter-bar .btn {
+        width: 100%;
+    }
+
+    .form-actions .btn,
+    .action-buttons .btn,
+    .toolbar .btn,
+    .filter-bar .btn {
+        width: 100%;
+    }
+
+    .table-responsive > .table {
+        min-width: 590px;
+    }
+
+    .modal-dialog {
+        margin: .5rem;
+    }
+}
