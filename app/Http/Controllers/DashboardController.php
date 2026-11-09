@@ -23,6 +23,7 @@ class DashboardController extends Controller
 
         $stats = [
             'total_students' => User::whereHas('role', fn ($q) => $q->where('name', 'siswa'))->count(),
+            'total_parents' => User::whereHas('role', fn ($q) => $q->where('name', 'orang_tua'))->count(),
             'total_teachers' => User::whereHas('role', fn ($q) => $q->where('name', 'guru'))->count(),
             'total_homeroom' => User::whereHas('role', fn ($q) => $q->where('name', 'wali_kelas'))->count(),
             'total_bk' => User::whereHas('role', fn ($q) => $q->where('name', 'bk'))->count(),

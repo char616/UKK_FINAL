@@ -231,8 +231,168 @@
         .section-description {
             margin: 0;
             color: var(--muted);
-            font-size: 11px;
+            font-size: 11.5px;
             line-height: 1.5;
+        }
+
+        /* JOURNAL FORM & CAMERA STUDIO STYLING */
+        .required-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: 999px;
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            color: #174EA6;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .journal-field-card {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .journal-form-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 7px;
+            color: #1E293B;
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .journal-form-label i {
+            color: var(--primary);
+            font-size: 13.5px;
+        }
+
+        .journal-input,
+        .journal-textarea {
+            border: 1px solid #CBD5E1;
+            border-radius: 9px;
+            background: #FFFFFF;
+            color: #1E293B;
+            font-size: 12.5px;
+            padding: 10px 14px;
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .journal-input::placeholder,
+        .journal-textarea::placeholder {
+            color: #94A3B8;
+            font-size: 12px;
+        }
+
+        .journal-input:focus,
+        .journal-textarea:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+            outline: none;
+        }
+
+        .journal-textarea {
+            resize: vertical;
+            min-height: 92px;
+            line-height: 1.55;
+        }
+
+        .journal-hint {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+            color: #64748B;
+            font-size: 11px;
+        }
+
+        .camera-studio-wrapper {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .camera-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 22px 18px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F1F6FF 100%);
+            border: 1.5px dashed #93C5FD;
+            border-radius: 10px;
+            text-align: center;
+            transition: border-color .2s ease, background .2s ease;
+        }
+
+        .camera-idle-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            color: #174EA6;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .btn-camera-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 38px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all .18s ease;
+        }
+
+        .btn-camera-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-camera-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 38px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all .18s ease;
+        }
+
+        .btn-camera-secondary:hover {
+            background: #F1F5F9;
+            border-color: #94A3B8;
+            color: #1E293B;
         }
 
         /* STATS COUNTER BAR */
@@ -309,10 +469,47 @@
 
         /* ATTENDANCE RADIO BUTTONS */
         .attendance-radio-group {
+            position: relative;
             display: inline-flex;
             border: 1px solid #CBD5E1;
             border-radius: 6px;
             overflow: hidden;
+        }
+
+        /* Cegah halaman melompat ke atas saat radio tersembunyi menerima fokus */
+        .attendance-radio-group .btn-check {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* AVATAR INISIAL SISWA */
+        .student-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            border: 1px solid #BFDBFE;
+            color: #1D4ED8;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .student-name-text {
+            color: #1E293B;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
         .attendance-radio-group .btn-check:checked + .btn-status-hadir {
@@ -603,103 +800,128 @@
                                 <p class="section-description">Isi materi yang diajarkan, ringkasan aktivitas KBM, catatan kelas, dan ambil foto dokumentasi real-time kegiatan belajar.</p>
                             </div>
                         </div>
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 fw-bold">
-                            <i class="bi bi-asterisk me-1 text-danger"></i> Wajib Dilengkapi
+                        <span class="required-pill-badge">
+                            <i class="bi bi-asterisk text-danger" style="font-size: 9px;"></i>
+                            <span>Wajib Dilengkapi</span>
                         </span>
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                Materi Pembelajaran <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" name="materi" class="form-control @error('materi') is-invalid @enderror" maxlength="255" required value="{{ old('materi', $journal?->materi) }}" placeholder="Contoh: Pemrograman Web - Integrasi REST API dan Token Sanctum" {{ !empty($isExpired) ? 'disabled' : '' }}>
-                            @error('materi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted" style="font-size: 10px;">Topik atau bab bahasan materi pada jam pelajaran ini.</small>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">
-                                Ringkasan Kegiatan Pembelajaran <span class="text-danger">*</span>
-                            </label>
-                            <textarea name="summary" class="form-control @error('summary') is-invalid @enderror" rows="3" required placeholder="Jelaskan jalannya kegiatan pembelajaran (contoh: Penyampaian teori 20 menit, live coding praktik 45 menit, dan tanya jawab evaluasi)." {{ !empty($isExpired) ? 'disabled' : '' }}>{{ old('summary', $journal?->activity_summary) }}</textarea>
-                            @error('summary')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-7">
-                            <label class="form-label fw-bold">
-                                Catatan Kejadian / Kendala KBM <span class="text-danger">*</span>
-                            </label>
-                            <textarea name="catatan_kejadian" class="form-control @error('catatan_kejadian') is-invalid @enderror" rows="3" required placeholder="Tuliskan kejadian kelas, respon siswa, atau kendala fasilitas (contoh: Seluruh siswa aktif mengerjakan tugas, proyektor ruangan berjalan lancar)." {{ !empty($isExpired) ? 'disabled' : '' }}>{{ old('catatan_kejadian', $journal?->catatan_kejadian ?? $journal?->notes) }}</textarea>
-                            @error('catatan_kejadian')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold">
-                                Foto Bukti Pembelajaran (Real-Time Kamera) <span class="text-danger">*</span>
-                            </label>
-
-                            <!-- Hidden snapshot data -->
-                            <input type="hidden" name="attachment_data" id="camera-snapshot-data">
-                            <!-- Hidden fallback file with camera capture directive for mobile/fallback -->
-                            <input type="file" name="attachment" id="journal-photo" accept="image/*" capture="environment" style="display:none;">
-
-                            <!-- Camera Widget Container -->
-                            <div class="camera-box p-3 bg-light rounded-3 border text-center">
-                                <!-- Video Stream element -->
-                                <video id="camera-stream" autoplay playsinline muted style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; background: #111; display: none;" class="mb-2 shadow-sm"></video>
-                                
-                                <!-- Canvas for capturing snapshot -->
-                                <canvas id="camera-canvas" style="display: none;"></canvas>
-
-                                <!-- Captured Preview Image -->
-                                <img id="camera-preview-img" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; display: none;" class="mb-2 border shadow-sm" alt="Foto Real-Time KBM">
-
-                                <!-- Status / Instructions -->
-                                <div id="camera-status-text" class="small text-muted mb-2" style="font-size: 11px;">
-                                    <i class="bi bi-camera me-1"></i> Wajib ambil foto real-time suasana KBM langsung melalui kamera perangkat.
+                    <div class="row g-4 align-items-stretch">
+                        <!-- KOLOM KIRI: INPUT MATERI, RINGKASAN & CATATAN KBM -->
+                        <div class="col-lg-7">
+                            <div class="journal-field-card">
+                                <div>
+                                    <label class="journal-form-label">
+                                        <i class="bi bi-book-half"></i>
+                                        <span>Materi Pembelajaran <span class="text-danger">*</span></span>
+                                    </label>
+                                    <input type="text" name="materi" class="form-control journal-input @error('materi') is-invalid @enderror" maxlength="255" required value="{{ old('materi', $journal?->materi) }}" placeholder="Contoh: Pemrograman Web - Integrasi REST API dan Token Sanctum" {{ !empty($isExpired) ? 'disabled' : '' }}>
+                                    @error('materi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="journal-hint">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span>Topik atau bab bahasan materi pada jam pelajaran ini.</span>
+                                    </div>
                                 </div>
 
-                                <!-- Camera Action Buttons -->
-                                <div class="d-flex flex-wrap justify-content-center gap-2" id="camera-btn-group">
-                                    <button type="button" class="btn btn-sm btn-primary fw-bold" id="btn-open-camera" {{ !empty($isExpired) ? 'disabled' : '' }}>
-                                        <i class="bi bi-camera-video me-1"></i> Buka Kamera
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm" id="btn-capture-photo" style="display: none;">
-                                        <i class="bi bi-camera-fill me-1"></i> Jepret Foto KBM
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" id="btn-retake-photo" style="display: none;">
-                                        <i class="bi bi-arrow-repeat me-1"></i> Jepret Ulang
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-light border text-muted" id="btn-trigger-fallback-file" title="Gunakan kamera perangkat (alternatif)" style="font-size: 10px;" {{ !empty($isExpired) ? 'disabled' : '' }}>
-                                        <i class="bi bi-phone"></i> Kamera HP
-                                    </button>
+                                <div class="row g-3 flex-grow-1">
+                                    <div class="col-md-6 d-flex flex-column">
+                                        <label class="journal-form-label">
+                                            <i class="bi bi-card-text"></i>
+                                            <span>Ringkasan Kegiatan Pembelajaran <span class="text-danger">*</span></span>
+                                        </label>
+                                        <textarea name="summary" class="form-control journal-textarea flex-grow-1 @error('summary') is-invalid @enderror" rows="4" required placeholder="Jelaskan jalannya kegiatan pembelajaran (contoh: Penyampaian teori 20 menit, live coding praktik 45 menit, dan tanya jawab evaluasi)." {{ !empty($isExpired) ? 'disabled' : '' }}>{{ old('summary', $journal?->activity_summary) }}</textarea>
+                                        @error('summary')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6 d-flex flex-column">
+                                        <label class="journal-form-label">
+                                            <i class="bi bi-clipboard2-pulse"></i>
+                                            <span>Catatan Kejadian / Kendala KBM <span class="text-danger">*</span></span>
+                                        </label>
+                                        <textarea name="catatan_kejadian" class="form-control journal-textarea flex-grow-1 @error('catatan_kejadian') is-invalid @enderror" rows="4" required placeholder="Tuliskan kejadian kelas, respon siswa, atau kendala fasilitas (contoh: Seluruh siswa aktif mengerjakan tugas, proyektor ruangan berjalan lancar)." {{ !empty($isExpired) ? 'disabled' : '' }}>{{ old('catatan_kejadian', $journal?->catatan_kejadian ?? $journal?->notes) }}</textarea>
+                                        @error('catatan_kejadian')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            @if(filled($journal?->photo_proof))
-                                <div class="mt-2 p-2 bg-light border rounded-2 d-flex align-items-center justify-content-between">
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                        <i class="bi bi-check-circle-fill me-1"></i> Foto Bukti Tersimpan
-                                    </span>
-                                    <a href="{{ route('journals.attachment', $journal) }}" target="_blank" rel="noopener" class="small fw-bold text-primary">
-                                        <i class="bi bi-box-arrow-up-right me-1"></i> Lihat Foto Lama
-                                    </a>
+                        <!-- KOLOM KANAN: STUDIO DOKUMENTASI KAMERA REAL-TIME -->
+                        <div class="col-lg-5">
+                            <div class="camera-studio-wrapper">
+                                <label class="journal-form-label mb-2">
+                                    <i class="bi bi-camera-fill"></i>
+                                    <span>Foto Bukti Pembelajaran (Real-Time Kamera) <span class="text-danger">*</span></span>
+                                </label>
+
+                                <!-- Hidden snapshot data -->
+                                <input type="hidden" name="attachment_data" id="camera-snapshot-data">
+                                <!-- Hidden fallback file with camera capture directive for mobile/fallback -->
+                                <input type="file" name="attachment" id="journal-photo" accept="image/*" capture="environment" style="display:none;">
+
+                                <!-- Camera Widget Container -->
+                                <div class="camera-box">
+                                    <div class="camera-idle-icon" id="camera-idle-icon">
+                                        <i class="bi bi-camera"></i>
+                                    </div>
+
+                                    <!-- Video Stream element -->
+                                    <video id="camera-stream" autoplay playsinline muted style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 8px; background: #0F172A; display: none;" class="mb-2 shadow-sm"></video>
+
+                                    <!-- Canvas for capturing snapshot -->
+                                    <canvas id="camera-canvas" style="display: none;"></canvas>
+
+                                    <!-- Captured Preview Image -->
+                                    <img id="camera-preview-img" style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 8px; display: none;" class="mb-2 border shadow-sm" alt="Foto Real-Time KBM">
+
+                                    <!-- Status / Instructions -->
+                                    <div id="camera-status-text" class="text-muted mb-3" style="font-size: 11.5px; max-width: 320px; line-height: 1.5;">
+                                        Wajib ambil foto real-time suasana KBM langsung melalui kamera perangkat.
+                                    </div>
+
+                                    <!-- Camera Action Buttons -->
+                                    <div class="d-flex flex-wrap justify-content-center gap-2" id="camera-btn-group">
+                                        <button type="button" class="btn-camera-primary" id="btn-open-camera" {{ !empty($isExpired) ? 'disabled' : '' }}>
+                                            <i class="bi bi-camera-video"></i>
+                                            <span>Buka Kamera</span>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger fw-bold shadow-sm px-3 py-2" id="btn-capture-photo" style="display: none; border-radius: 8px;">
+                                            <i class="bi bi-camera-fill me-1"></i> Jepret Foto KBM
+                                        </button>
+                                        <button type="button" class="btn-camera-secondary" id="btn-retake-photo" style="display: none;">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                            <span>Jepret Ulang</span>
+                                        </button>
+                                        <button type="button" class="btn-camera-secondary" id="btn-trigger-fallback-file" title="Gunakan kamera perangkat (alternatif)" {{ !empty($isExpired) ? 'disabled' : '' }}>
+                                            <i class="bi bi-phone"></i>
+                                            <span>Kamera HP</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            @endif
 
-                            @error('attachment')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                            @error('attachment_data')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
+                                @if(filled($journal?->photo_proof))
+                                    <div class="mt-2 p-2 bg-white border rounded-3 d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Foto Bukti Tersimpan
+                                        </span>
+                                        <a href="{{ route('journals.attachment', $journal) }}" target="_blank" rel="noopener" class="small fw-bold text-primary text-decoration-none">
+                                            <i class="bi bi-box-arrow-up-right me-1"></i> Lihat Foto Lama
+                                        </a>
+                                    </div>
+                                @endif
+
+                                @error('attachment')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                                @error('attachment_data')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -765,15 +987,10 @@
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="rounded-circle bg-primary-subtle text-primary d-grid place-items-center" style="width:28px;height:28px;font-size:12px;font-weight:700;">
-                                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                <div class="student-avatar">
+                                                    {{ mb_strtoupper(mb_substr(trim($student->name), 0, 1)) }}
                                                 </div>
-                                                <div>
-                                                    <span class="fw-bold text-dark d-block">{{ $student->name }}</span>
-                                                    @if($student->parent_name)
-                                                        <small class="text-muted" style="font-size: 10px;">Ortu: {{ $student->parent_name }}</small>
-                                                    @endif
-                                                </div>
+                                                <span class="student-name-text">{{ $student->name }}</span>
                                             </div>
                                         </td>
                                         <td class="text-center">
@@ -854,6 +1071,7 @@
         const videoEl = document.getElementById('camera-stream');
         const canvasEl = document.getElementById('camera-canvas');
         const previewImgEl = document.getElementById('camera-preview-img');
+        const idleIconEl = document.getElementById('camera-idle-icon');
         const snapshotInputEl = document.getElementById('camera-snapshot-data');
         const openCameraBtn = document.getElementById('btn-open-camera');
         const capturePhotoBtn = document.getElementById('btn-capture-photo');
@@ -875,6 +1093,7 @@
                 });
                 videoEl.srcObject = cameraStream;
                 videoEl.style.display = 'block';
+                if (idleIconEl) idleIconEl.style.display = 'none';
                 if (previewImgEl) previewImgEl.style.display = 'none';
                 openCameraBtn.style.display = 'none';
                 capturePhotoBtn.style.display = 'inline-flex';
@@ -897,6 +1116,7 @@
             snapshotInputEl.value = dataUrl;
             previewImgEl.src = dataUrl;
             previewImgEl.style.display = 'block';
+            if (idleIconEl) idleIconEl.style.display = 'none';
             videoEl.style.display = 'none';
 
             // Stop active tracks
@@ -911,6 +1131,7 @@
         retakePhotoBtn?.addEventListener('click', function () {
             snapshotInputEl.value = '';
             if (previewImgEl) previewImgEl.style.display = 'none';
+            if (idleIconEl) idleIconEl.style.display = 'grid';
             retakePhotoBtn.style.display = 'none';
             openCameraBtn?.click();
         });
@@ -929,6 +1150,7 @@
                     previewImgEl.src = evt.target.result;
                     previewImgEl.style.display = 'block';
                 }
+                if (idleIconEl) idleIconEl.style.display = 'none';
                 if (videoEl) videoEl.style.display = 'none';
                 if (openCameraBtn) openCameraBtn.style.display = 'none';
                 if (capturePhotoBtn) capturePhotoBtn.style.display = 'none';

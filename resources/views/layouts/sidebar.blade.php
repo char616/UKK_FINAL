@@ -24,8 +24,13 @@
     if ($isParentMode) {
         $displayUserName = $currentUser?->parent_name ?: $currentUser?->name;
         $displayRoleLabel = 'Orang Tua / Wali';
-        if (! empty($currentUser?->parent_name) && ! empty($currentUser?->name)) {
+        if (! empty($currentUser?->parent_name) && ! empty($currentUser?->name) && $currentUser->parent_name !== $currentUser->name) {
             $displaySubInfo = 'Ortu dari: ' . $currentUser->name;
+        } elseif ($currentUser?->role?->name === 'orang_tua') {
+            $childNames = $currentUser->students()->pluck('name')->join(', ');
+            if ($childNames !== '') {
+                $displaySubInfo = 'Ortu dari: ' . $childNames;
+            }
         }
     } elseif ($roleName === 'siswa') {
         $displayUserName = $currentUser?->name;
@@ -43,7 +48,7 @@
         ['route' => 'master-data.index', 'label' => 'Manajemen Data', 'icon' => 'bi-folder2-open', 'roles' => ['waka']],
         ['route' => 'audit-logs.index', 'label' => 'Audit Log', 'icon' => 'bi-shield-check', 'roles' => ['waka']],
         ['route' => 'attendances.index', 'label' => 'Presensi & Jurnal', 'icon' => 'bi-calendar-check', 'roles' => ['guru']],
-        ['route' => 'attendances.index', 'label' => 'Presensi Siswa', 'icon' => 'bi-calendar-check', 'roles' => ['bk', 'wali_kelas', 'siswa', 'orang_tua']],
+        ['route' => 'attendances.index', 'label' => 'Presensi Siswa', 'icon' => 'bi-calendar-check', 'roles' => ['bk', 'siswa', 'orang_tua']],
         ['route' => 'leaves.index', 'label' => 'Izin dan Sakit', 'icon' => 'bi-envelope-paper', 'roles' => ['bk', 'wali_kelas', 'siswa', 'orang_tua']],
         ['route' => 'reports.attendance', 'label' => 'Laporan Presensi', 'icon' => 'bi-file-earmark-text', 'roles' => ['bk', 'wali_kelas']],
         ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bi-bell', 'roles' => ['bk', 'wali_kelas', 'guru', 'siswa', 'orang_tua']],
@@ -1171,7 +1176,7 @@
             @csrf
             <button class="scp-sidebar-link scp-logout-link" type="submit">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Keluar</span>
+                <span>Logout</span>
             </button>
         </form>
     @endif

@@ -179,16 +179,16 @@ class SchoolWorkflowTest extends TestCase
 
         for ($index = 0; $index < 51; $index++) {
             $schoolData = $this->createScheduleData(createSchedule: false);
-            $dayIndex = $index % 6;
-            $roundIndex = intdiv($index, 36);
-            $hour = 8 + intdiv($index % 36, 6);
+            $dayIndex = $index % 5;
+            $roundIndex = intdiv($index, 30);
+            $hour = 8 + intdiv($index % 30, 5);
             $schoolData['class']->update(['phase' => $roundIndex === 0 ? 'ganjil' : 'genap']);
 
             $schedules[] = [
                 'class_id' => $schoolData['class']->id,
                 'subject_id' => $schoolData['subject']->id,
                 'room_id' => $schoolData['room']->id,
-                'day' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][$dayIndex],
+                'day' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'][$dayIndex],
                 'start_time' => sprintf('%02d:00', $hour),
                 'end_time' => sprintf('%02d:00', $hour + 1),
                 'round' => $roundIndex + 1,
@@ -348,7 +348,7 @@ class SchoolWorkflowTest extends TestCase
             ->get(route('dashboard.waka'))
             ->assertOk()
             ->assertSee('Jadwal & penguncian', false)
-            ->assertSee('Data kelas')
+            ->assertSee('Manajemen Data')
             ->assertSee('Jurnal mengajar')
             ->assertSee('Audit log')
             ->assertSee('Pengaturan akun')
@@ -361,12 +361,12 @@ class SchoolWorkflowTest extends TestCase
                 'Dashboard',
                 'Jadwal Pelajaran',
                 'Jurnal Mengajar',
-                'Master Data',
+                'Manajemen Data',
                 'Audit Log',
                 'Pengaturan Akun',
                 'User 1',
                 'Waka',
-                'Keluar',
+                'Logout',
             ]);
     }
 

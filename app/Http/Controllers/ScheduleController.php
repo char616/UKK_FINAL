@@ -25,26 +25,91 @@ class ScheduleController extends Controller
     public function index(Request $request): View
     {
         $user = Auth::user();
+        $roleName = $user->role?->name ?? '';
+        $activeLoginAs = session('login_as') ?? $user?->last_login_as ?? $roleName;
+        $isParentMode = ($roleName === 'siswa' && $activeLoginAs === 'orang_tua') || $roleName === 'orang_tua';
+        $isStudentMode = ($roleName === 'siswa' && $activeLoginAs !== 'orang_tua');
+
         $activeRound = Cycle::current()->active_round;
         $scheduleLock = ScheduleLock::firstOrCreate(['id' => 1], ['is_locked' => false]);
 
         $query = Schedule::with(['teacher', 'class.major', 'subject', 'room', 'jamPelajaran'])
             ->where('round', $activeRound);
 
-        if ($user->role->name === 'guru') {
-            $query->where('teacher_id', $user->id);
-        } elseif ($user->role->name === 'wali_kelas') {
-            $query->whereIn('class_id', $user->homeroomClasses()->select('classes.id'));
-        } elseif ($user->role->name === 'siswa') {
-            $query->where('class_id', $user->class_id);
-        } elseif ($user->role->name === 'orang_tua') {
-            $query->whereIn('class_id', $user->students()->select('users.class_id'));
+        $selectedDay = $request->query('day');
+        $selectedClassId = $request->query('class_id');
+
+        if ($selectedDay && in_array($selectedDay, ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'], true)) {
+            $query->where('day', $selectedDay);
         }
 
+        // Penanganan hak akses data per peran (Siswa dan Orang Tua hanya bisa melihat jadwal kelasnya sendiri)
+        if ($isStudentMode) {
+            if ($user->class_id) {
+                $query->where('class_id', $user->class_id);
+                $classes = $user->schoolClass ? collect([$user->schoolClass]) : collect();
+            } else {
+                $query->whereRaw('1 = 0');
+                $classes = collect();
+            }
+        } elseif ($isParentMode) {
+            $parentClassIds = $user->role?->name === 'orang_tua'
+                ? $user->students()->pluck('users.class_id')->filter()->unique()->values()->all()
+                : [];
+
+            if (empty($parentClassIds) && $user->class_id) {
+                $parentClassIds = [$user->class_id];
+            }
+
+            if (! empty($parentClassIds)) {
+                if ($selectedClassId && in_array((int) $selectedClassId, array_map('intval', $parentClassIds), true)) {
+                    $query->where('class_id', $selectedClassId);
+                } else {
+                    $query->whereIn('class_id', $parentClassIds);
+                }
+                $classes = Classes::with('major')->whereIn('id', $parentClassIds)->orderBy('name')->get();
+            } else {
+                $query->whereRaw('1 = 0');
+                $classes = collect();
+            }
+        } elseif ($roleName === 'wali_kelas') {
+            $homeroomClassIds = $user->homeroomClasses()->pluck('id')->all();
+            if ($selectedClassId && in_array((int) $selectedClassId, $homeroomClassIds, true)) {
+                $query->where('class_id', $selectedClassId);
+            } else {
+                $query->whereIn('class_id', $homeroomClassIds);
+            }
+            $classes = $user->homeroomClasses()->with('major')->orderBy('name')->get();
+        } elseif ($roleName === 'guru') {
+            $query->where('teacher_id', $user->id);
+            $taughtClassIds = Schedule::where('teacher_id', $user->id)
+                ->where('round', $activeRound)
+                ->pluck('class_id')
+                ->unique()
+                ->map(fn ($id) => (int) $id)
+                ->all();
+
+            if ($selectedClassId && in_array((int) $selectedClassId, $taughtClassIds, true)) {
+                $query->where('class_id', (int) $selectedClassId);
+            }
+
+            $classes = Classes::with('major')->whereIn('id', $taughtClassIds)->orderBy('name')->get();
+        } else {
+            // Waka, BK, Administrator
+            if ($selectedClassId) {
+                $query->where('class_id', $selectedClassId);
+            }
+            $classes = Classes::with('major')->orderBy('name')->get();
+        }
+
+        $inputClasses = Classes::with('major')->orderBy('name')->get();
         $schedules = $query->orderBy('day')->orderBy('start_time')->get();
-        $classes = Classes::with('major')->orderBy('name')->get();
+        if (! app()->environment('testing') && Room::count() < 60) {
+            \Database\Seeders\DatabaseSeeder::ensureOfficialRoomsSeeded();
+        }
+
         $subjects = Subject::orderBy('name')->get();
-        $rooms = Room::orderBy('name')->get();
+        $rooms = Room::orderBy('id')->get();
         $teachers = User::whereHas('role', fn ($q) => $q->where('name', 'guru'))
             ->where('is_active', true)
             ->orderBy('name')
@@ -68,7 +133,7 @@ class ScheduleController extends Controller
             ->orderBy('urutan')
             ->get(['id', 'hari', 'nama_sesi', 'jam_mulai', 'jam_selesai', 'urutan']);
 
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
         $sessionsByDay = [];
 
         foreach ($days as $day) {
@@ -107,6 +172,7 @@ class ScheduleController extends Controller
             'user',
             'schedules',
             'classes',
+            'inputClasses',
             'subjects',
             'rooms',
             'teachers',
@@ -131,7 +197,7 @@ class ScheduleController extends Controller
             'schedules.*.class_id' => ['required', 'integer', 'exists:classes,id'],
             'schedules.*.subject_id' => ['required', 'integer', 'exists:subjects,id'],
             'schedules.*.room_id' => ['required', 'integer', 'exists:rooms,id'],
-            'schedules.*.day' => ['required', 'string', Rule::in(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'])],
+            'schedules.*.day' => ['required', 'string', Rule::in(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'])],
             'schedules.*.start_time' => ['required', 'date_format:H:i'],
             'schedules.*.end_time' => ['required', 'date_format:H:i', 'after:schedules.*.start_time'],
             'schedules.*.round' => ['required', 'integer', Rule::in([1, 2])],

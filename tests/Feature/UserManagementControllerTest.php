@@ -60,8 +60,8 @@ class UserManagementControllerTest extends TestCase
         $this->assertDatabaseCount('users', 1);
         $this->get(route('accounts.index'))
             ->assertOk()
-            ->assertSee('Target akun aktif')
-            ->assertSee('Kelas: 10, 11, 12 RPL 1 dan 2');
+            ->assertSee('Buat Akun Pengguna Baru')
+            ->assertDontSee('Semua akun aktif otomatis');
     }
 
     public function test_student_and_parent_login_ids_follow_the_school_convention(): void

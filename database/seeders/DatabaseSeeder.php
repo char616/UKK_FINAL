@@ -18,26 +18,22 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
-            // 1. Tepat 5 Role Sistem (Admin/Waka, BK, Wali Kelas, Guru, Siswa/Ortu digabung)
+            // 1. Role Sistem (Admin/Waka, BK, Wali Kelas, Guru, Siswa, Orang Tua)
             $roles = [
                 ['name' => 'waka', 'display_name' => 'Admin / Waka'],
-                ['name' => 'bk', 'display_name' => 'BK'],
+                ['name' => 'bk', 'display_name' => 'Guru BK'],
                 ['name' => 'wali_kelas', 'display_name' => 'Wali Kelas'],
                 ['name' => 'guru', 'display_name' => 'Guru'],
-                ['name' => 'siswa', 'display_name' => 'Siswa / Orang Tua'],
+                ['name' => 'siswa', 'display_name' => 'Siswa'],
+                ['name' => 'orang_tua', 'display_name' => 'Orang Tua'],
             ];
 
             foreach ($roles as $roleData) {
                 Role::query()->updateOrCreate(['name' => $roleData['name']], $roleData);
             }
 
-            // Migrasi & hapus role lama 'orang_tua' jika masih ada
             $studentRole = Role::query()->where('name', 'siswa')->firstOrFail();
-            $parentRole = Role::query()->where('name', 'orang_tua')->first();
-            if ($parentRole) {
-                User::query()->where('role_id', $parentRole->id)->update(['role_id' => $studentRole->id]);
-                $parentRole->delete();
-            }
+            $parentRole = Role::query()->where('name', 'orang_tua')->firstOrFail();
 
             $wakaRole = Role::query()->where('name', 'waka')->firstOrFail();
             $bkRole = Role::query()->where('name', 'bk')->firstOrFail();
@@ -54,10 +50,11 @@ class DatabaseSeeder extends Seeder
             // Pastikan akun Admin / Waka utama tetap tersedia
             $this->upsertAccount(
                 loginKey: 'WAKA001',
-                name: 'Bapak Waka Kurikulum',
+                name: 'Sunarsih, S.Pd.',
                 email: 'waka@school.test',
                 role: $wakaRole
             );
+            User::query()->where('role_id', $wakaRole->id)->update(['name' => 'Sunarsih, S.Pd.']);
 
             // Bersihkan seluruh akun dummy lama (Guru dummy, Wali dummy, BK dummy, Siswa/Ortu dummy)
             DB::table('parent_student')->delete();
@@ -65,8 +62,8 @@ class DatabaseSeeder extends Seeder
 
             User::query()
                 ->where('login_key', '!=', 'WAKA001')
-                ->where(function ($query) use ($teacherRole, $homeroomRole, $studentRole, $bkRole): void {
-                    $query->whereIn('role_id', [$teacherRole->id, $homeroomRole->id, $studentRole->id, $bkRole->id])
+                ->where(function ($query) use ($teacherRole, $homeroomRole, $studentRole, $parentRole, $bkRole): void {
+                    $query->whereIn('role_id', [$teacherRole->id, $homeroomRole->id, $studentRole->id, $parentRole->id, $bkRole->id])
                         ->orWhereIn('login_key', [
                             'BK001', 'WALI001', 'GURU001', 'SISWA001', 'ORTU001',
                             'BK_1', 'BK_2', 'BK_3', 'BK_4', 'BK_5', 'BK_6',
@@ -348,10 +345,11 @@ class DatabaseSeeder extends Seeder
                 $studentName = trim($studentItem['name']);
                 $parentName = trim($studentItem['parent_name']);
 
-                // Format login Ortu: Nama Siswa_Nama Ortu (disimpan lowercase agar konsisten & case-insensitive)
+                // Format login Ortu: nama_siswa_ortu serta mendukung format Nama Siswa_Nama Ortu
                 $parentLoginKey = Str::lower($studentName . '_' . $parentName);
+                $parentAccountLoginKey = Str::slug($studentName, '_') . '_ortu';
 
-                User::query()->updateOrCreate(
+                $student = User::query()->updateOrCreate(
                     ['login_key' => $nis],
                     [
                         'name' => $studentName,
@@ -367,6 +365,25 @@ class DatabaseSeeder extends Seeder
                         'is_active' => true,
                     ]
                 );
+
+                $parent = User::query()->updateOrCreate(
+                    ['login_key' => $parentAccountLoginKey],
+                    [
+                        'name' => $parentName,
+                        'nip' => null,
+                        'nis' => null,
+                        'parent_name' => $parentName,
+                        'parent_login_key' => $parentLoginKey,
+                        'email' => "ortu{$nis}@school.test",
+                        'role_id' => $parentRole->id,
+                        'class_id' => $kelasXiiRpl1->id,
+                        'password' => $defaultPassword,
+                        'must_change_password' => false,
+                        'is_active' => true,
+                    ]
+                );
+
+                $student->parents()->syncWithoutDetaching([$parent->id]);
             }
         });
 
@@ -390,6 +407,28 @@ class DatabaseSeeder extends Seeder
 
         // Hapus mapel dummy lama yang tidak termasuk dalam daftar 69 mapel
         Subject::query()->whereNotIn('code', $codes)->delete();
+
+        // 8. Seed Master Ruangan (60 Ruangan Resmi)
+        self::ensureOfficialRoomsSeeded();
+    }
+
+    public static function ensureOfficialRoomsSeeded(): void
+    {
+        $officialRooms = self::getOfficialRooms();
+        $roomCodes = array_column($officialRooms, 'code');
+
+        Room::query()->whereNotIn('code', $roomCodes)->whereDoesntHave('schedules')->delete();
+
+        foreach ($officialRooms as $roomData) {
+            Room::query()->updateOrCreate(
+                ['code' => $roomData['code']],
+                [
+                    'name' => $roomData['name'],
+                    'capacity' => $roomData['capacity'] ?? 36,
+                    'rules' => $roomData['rules'] ?? null,
+                ]
+            );
+        }
     }
 
     private function seedTestingData(Role $wakaRole, Role $bkRole, Role $homeroomRole, Role $teacherRole, Role $studentRole): void
@@ -397,7 +436,7 @@ class DatabaseSeeder extends Seeder
         $major = Major::query()->updateOrCreate(['code' => 'RPL'], ['name' => 'Rekayasa Perangkat Lunak']);
 
         // 1 Waka
-        $this->upsertAccount('WAKA001', 'Waka Kurikulum', 'waka@school.test', $wakaRole);
+        $this->upsertAccount('WAKA001', 'Sunarsih, S.Pd.', 'waka@school.test', $wakaRole);
 
         // 6 BK: BK_1 s/d BK_6
         for ($i = 1; $i <= 6; $i++) {
@@ -578,5 +617,37 @@ class DatabaseSeeder extends Seeder
             ['code' => 'TEKPER', 'name' => 'Teknologi Perkantoran'],
             ['code' => 'VIDEO', 'name' => 'Videografi'],
         ];
+    }
+
+    public static function getOfficialRooms(): array
+    {
+        $rooms = [];
+
+        for ($i = 1; $i <= 32; $i++) {
+            $rooms[] = [
+                'code' => "RUANG-{$i}",
+                'name' => "Ruang {$i}",
+                'capacity' => 36,
+            ];
+        }
+
+        for ($i = 1; $i <= 22; $i++) {
+            $rooms[] = [
+                'code' => "LAB-{$i}",
+                'name' => "Lab {$i}",
+                'capacity' => 36,
+            ];
+        }
+
+        $specialRooms = [
+            ['code' => 'LAB-IPA', 'name' => 'Lab IPA', 'capacity' => 36],
+            ['code' => 'HALL', 'name' => 'Hall', 'capacity' => 100],
+            ['code' => 'RUANG-SINIAR', 'name' => 'Ruang Siniar', 'capacity' => 36],
+            ['code' => 'OR1', 'name' => 'Lapangan Olahraga 1 (OR1)', 'capacity' => 36],
+            ['code' => 'OR2', 'name' => 'Lapangan Olahraga 2 (OR2)', 'capacity' => 36],
+            ['code' => 'OR3', 'name' => 'Lapangan Olahraga 3 (OR3)', 'capacity' => 36],
+        ];
+
+        return array_merge($rooms, $specialRooms);
     }
 }

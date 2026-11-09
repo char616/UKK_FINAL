@@ -56,7 +56,7 @@ class LeaveRequestController extends Controller
             ->orderBy('urutan')
             ->get();
 
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
         $sessionsByDay = [];
 
         foreach ($days as $day) {

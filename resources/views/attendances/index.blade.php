@@ -457,10 +457,12 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-6 col-md-3">
-                            <label class="form-label small fw-bold mb-1">Cari Siswa / NIS</label>
-                            <input type="text" name="search" class="form-control form-control-sm" placeholder="Nama atau NIS siswa..." value="{{ request('search') }}">
-                        </div>
+                        @if(! in_array($user->role->name, ['siswa', 'orang_tua'], true))
+                            <div class="col-sm-6 col-md-3">
+                                <label class="form-label small fw-bold mb-1">Cari Siswa / NIS</label>
+                                <input type="text" name="search" class="form-control form-control-sm" placeholder="Nama atau NIS siswa..." value="{{ request('search') }}">
+                            </div>
+                        @endif
 
                         @if(in_array($user->role->name, ['waka', 'bk', 'wali_kelas'], true))
                             <div class="col-sm-6 col-md-2">

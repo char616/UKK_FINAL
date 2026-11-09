@@ -26,8 +26,12 @@ class MasterDataController extends Controller
             ->withCount(['students', 'schedules'])
             ->orderBy('name')
             ->get();
+        if (! app()->environment('testing') && Room::count() < 60) {
+            \Database\Seeders\DatabaseSeeder::ensureOfficialRoomsSeeded();
+        }
+
         $subjects = Subject::withCount('schedules')->orderBy('name')->get();
-        $rooms = Room::withCount('schedules')->orderBy('name')->get();
+        $rooms = Room::withCount('schedules')->orderBy('id')->get();
         $homeroomTeachers = User::with('homeroomClasses:id,name,homeroom_teacher_id')
             ->whereHas('role', fn ($q) => $q->where('name', 'wali_kelas'))
             ->where('is_active', true)

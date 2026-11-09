@@ -53,44 +53,75 @@
                 </div>
             </section>
 
+            @if(session('success'))
+                <div class="alert-scp-success">
+                    <i class="bi bi-check-circle-fill fs-5"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert-scp-danger">
+                    <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                    <span>{{ $errors->first() }}</span>
+                </div>
+            @endif
+
             <!-- KONTEN TABEL AUDIT LOG -->
             <section class="content-card">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-clock-history"></i>
+                <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="section-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div>
+                            <h2 class="section-title">Log Aktivitas Terkini</h2>
+                            <p class="section-description">Catatan peristiwa dan tindakan administratif secara kronologis.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="section-title">Log Aktivitas Terkini</h2>
-                        <p class="section-description">Catatan peristiwa dan tindakan administratif secara kronologis.</p>
-                    </div>
+
+                    @if($logs->total() > 0)
+                        <form action="{{ route('audit-logs.destroy-all') }}" method="POST" onsubmit="return confirm('{{ $date ? 'Apakah Anda yakin ingin menghapus seluruh audit log pada tanggal ' . $date . '?' : 'Apakah Anda yakin ingin menghapus seluruh riwayat audit log?' }}');">
+                            @csrf
+                            @method('DELETE')
+                            @if($date)
+                                <input type="hidden" name="date" value="{{ $date }}">
+                            @endif
+                            <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-trash3-fill"></i>
+                                <span>{{ $date ? 'Hapus Log Tanggal Ini' : 'Hapus Semua Audit Log' }}</span>
+                            </button>
+                        </form>
+                    @endif
                 </div>
 
                 <form method="GET" action="{{ route('audit-logs.index') }}" class="row g-2 mb-4 align-items-end">
                     <div class="col-md-4">
-                        <label for="audit-date" class="form-label">Tanggal</label>
+                        <label for="audit-date" class="form-label">Filter Tanggal</label>
                         <input id="audit-date" type="date" name="date" value="{{ $date }}" class="form-control">
                     </div>
-                    <div class="col-md-2 d-flex gap-2">
+                    <div class="col-md-3 d-flex gap-2">
                         <button class="btn-primary-custom flex-grow-1" type="submit"><i class="bi bi-filter"></i> Tampilkan</button>
                         <a class="btn-outline-custom" href="{{ route('audit-logs.index') }}" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a>
                     </div>
                 </form>
 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table align-middle">
                         <thead>
                             <tr>
                                 <th width="6%" class="text-center">No</th>
                                 <th width="16%">Waktu</th>
-                                <th width="22%">Pengguna</th>
-                                <th width="18%">Aksi</th>
+                                <th width="20%">Pengguna</th>
+                                <th width="16%">Kategori Aksi</th>
                                 <th>Keterangan Detail</th>
+                                <th width="10%" class="text-end">Tindakan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($logs as $index => $log)
                                 <tr>
-                                    <td class="text-center text-muted fw-bold">{{ $index + 1 }}</td>
+                                    <td class="text-center text-muted fw-bold">{{ ($logs->firstItem() ?? 1) + $index }}</td>
                                     <td>
                                         <span class="text-muted small">
                                             <i class="bi bi-clock me-1"></i>{{ $log->created_at->format('d/m/Y H:i') }}
@@ -102,7 +133,7 @@
                                             <div>
                                                 <strong class="text-dark d-block">{{ $log->user->name ?? '-' }}</strong>
                                                 <span class="badge bg-info-subtle text-info border border-info-subtle" style="font-size: 9px; padding: 1px 6px;">
-                                                    {{ $log->user->role->name ?? '-' }}
+                                                    {{ $log->user->role->display_name ?? $log->user->role->name ?? '-' }}
                                                 </span>
                                             </div>
                                         </div>
@@ -113,10 +144,20 @@
                                         </span>
                                     </td>
                                     <td><span class="text-dark small">{{ $log->description }}</span></td>
+                                    <td class="text-end">
+                                        <form action="{{ route('audit-logs.destroy', $log) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus catatan audit log ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2.5 rounded-2" title="Hapus Log">
+                                                <i class="bi bi-trash3"></i>
+                                                <span class="d-none d-md-inline ms-1" style="font-size: 11px;">Hapus</span>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-5">
+                                    <td colspan="6" class="text-center text-muted py-5">
                                         <i class="bi bi-journal-x fs-2 d-block mb-2 opacity-50"></i>
                                         <strong class="d-block text-dark">Belum Ada Riwayat Aktivitas</strong>
                                         <span class="small">Data log aktivitas yang telah tercatat akan ditampilkan di sini.</span>

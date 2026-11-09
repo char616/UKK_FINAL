@@ -18,14 +18,42 @@
     <!-- KONTEN UTAMA -->
     <main class="main-content">
         <div class="content-wrapper">
+            @php
+                $roleName = $user->role?->name ?? '';
+                $activeLoginAs = session('login_as') ?? $user?->last_login_as ?? $roleName;
+                $isParent = ($roleName === 'siswa' && $activeLoginAs === 'orang_tua') || $roleName === 'orang_tua';
+                $isStudent = ($roleName === 'siswa' && $activeLoginAs !== 'orang_tua');
+            @endphp
             
             <header class="page-header">
                 <div>
                     <div class="page-eyebrow">
-                        <i class="bi bi-calendar-week-fill"></i>
-                        Kurikulum & Akademik
+                        <i class="bi {{ $isStudent ? 'bi-mortarboard-fill' : ($isParent ? 'bi-people-fill' : 'bi-calendar-week-fill') }}"></i>
+                        @if($isStudent)
+                            Jadwal Pelajaran Kelas Saya
+                        @elseif($isParent)
+                            Jadwal Pelajaran Ananda
+                        @elseif($roleName === 'guru')
+                            Jadwal Mengajar Guru
+                        @elseif($roleName === 'wali_kelas')
+                            Jadwal Pelajaran Kelas Binaan
+                        @else
+                            Kurikulum & Akademik
+                        @endif
                     </div>
-                    <h1 class="page-title">Jadwal Kegiatan Belajar Mengajar</h1>
+                    <h1 class="page-title">
+                        @if($isStudent)
+                            Jadwal Pelajaran Kelas {{ $user->schoolClass?->name ?? '' }}
+                        @elseif($isParent)
+                            Jadwal Pelajaran Ananda
+                        @elseif($roleName === 'guru')
+                            Jadwal Mengajar Guru
+                        @elseif($roleName === 'wali_kelas')
+                            Jadwal Pelajaran Kelas Binaan
+                        @else
+                            Jadwal Kegiatan Belajar Mengajar
+                        @endif
+                    </h1>
                 </div>
 
                 <div class="academic-badge">
@@ -39,21 +67,51 @@
                 <div class="hero-content">
                     <div class="hero-text">
                         <div class="hero-label">
-                            <i class="bi bi-calendar3-range-fill"></i>
-                            JADWAL KBM SEKOLAH
+                            <i class="bi {{ $isStudent ? 'bi-person-badge-fill' : ($isParent ? 'bi-people-fill' : 'bi-calendar3-range-fill') }}"></i>
+                            @if($isStudent)
+                                JADWAL KBM SISWA
+                            @elseif($isParent)
+                                JADWAL KBM ORANG TUA / WALI
+                            @elseif($roleName === 'guru')
+                                JADWAL MENGAJAR GURU
+                            @elseif($roleName === 'wali_kelas')
+                                JADWAL KBM KELAS BINAAN
+                            @else
+                                JADWAL KBM SEKOLAH
+                            @endif
                         </div>
 
                         <h2 class="hero-title">
-                            Jadwal Pelajaran & Siklus Putaran Blok
+                            @if($isStudent)
+                                Jadwal Pelajaran Kelas {{ $user->schoolClass?->name ?? 'Saya' }}
+                            @elseif($isParent)
+                                Jadwal Pelajaran Putra / Putri Anda
+                            @elseif($roleName === 'guru')
+                                Jadwal Mengajar Guru & Sesi KBM
+                            @elseif($roleName === 'wali_kelas')
+                                Jadwal Pelajaran Kelas Binaan
+                            @else
+                                Jadwal Pelajaran & Siklus Putaran Blok
+                            @endif
                         </h2>
 
                         <p class="hero-description">
-                            Pantau dan kelola jadwal mengajar seluruh tingkatan kelas, pencegahan bentrok otomatis ruang dan guru, serta kendali penguncian jadwal terpusat oleh Waka Kurikulum.
+                            @if($isStudent)
+                                Menampilkan jadwal kegiatan belajar mengajar (KBM) khusus untuk kelas {{ $user->schoolClass?->name ?? 'Anda' }} pada putaran blok aktif saat ini.
+                            @elseif($isParent)
+                                Menampilkan jadwal kegiatan belajar mengajar (KBM) khusus untuk rombel kelas putra/putri Anda pada putaran blok aktif saat ini.
+                            @elseif($roleName === 'guru')
+                                Pantau jadwal mata pelajaran dan kelas yang Anda ampu, serta alokasi ruangan KBM pada putaran blok aktif saat ini.
+                            @elseif($roleName === 'wali_kelas')
+                                Pantau jadwal mata pelajaran untuk siswa di kelas binaan Anda pada putaran blok aktif saat ini.
+                            @else
+                                Pantau dan kelola jadwal mengajar seluruh tingkatan kelas, pencegahan bentrok otomatis ruang dan guru, serta kendali penguncian jadwal terpusat oleh Waka Kurikulum.
+                            @endif
                         </p>
                     </div>
 
                     <div class="hero-icon">
-                        <i class="bi bi-calendar2-week-fill"></i>
+                        <i class="bi {{ $isStudent ? 'bi-backpack-fill' : ($isParent ? 'bi-heart-pulse-fill' : 'bi-calendar2-week-fill') }}"></i>
                     </div>
                 </div>
             </section>
@@ -120,7 +178,7 @@
                                             <label class="form-label">Kelas / Jurusan</label>
                                             <select name="schedules[{{ $index }}][class_id]" class="form-select" required>
                                                 <option value="">-- Pilih Kelas --</option>
-                                                @foreach($classes as $class)
+                                                @foreach(($inputClasses ?? $classes) as $class)
                                                     <option value="{{ $class->id }}" @selected(($oldSchedule['class_id'] ?? '') == $class->id)>{{ $class->name }} ({{ $class->major?->name ?? '-' }})</option>
                                                 @endforeach
                                             </select>
@@ -137,7 +195,7 @@
                                         <div class="col-md-6 col-xl-3">
                                             <label class="form-label">Hari</label>
                                             <select name="schedules[{{ $index }}][day]" class="form-select" required>
-                                                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as $day)
+                                                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $day)
                                                     <option value="{{ $day }}" @selected(($oldSchedule['day'] ?? 'Senin') === $day)>{{ $day }}</option>
                                                 @endforeach
                                             </select>
@@ -256,7 +314,7 @@
                                 <label class="form-label">Kelas / Jurusan</label>
                                 <select name="schedules[__INDEX__][class_id]" class="form-select" required>
                                     <option value="">-- Pilih Kelas --</option>
-                                    @foreach($classes as $class)
+                                    @foreach(($inputClasses ?? $classes) as $class)
                                         <option value="{{ $class->id }}">{{ $class->name }} ({{ $class->major?->name ?? '-' }})</option>
                                     @endforeach
                                 </select>
@@ -273,7 +331,7 @@
                             <div class="col-md-6 col-xl-3">
                                 <label class="form-label">Hari</label>
                                 <select name="schedules[__INDEX__][day]" class="form-select" required>
-                                    @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as $day)
+                                    @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $day)
                                         <option value="{{ $day }}">{{ $day }}</option>
                                     @endforeach
                                 </select>
@@ -341,8 +399,30 @@
                             <i class="bi bi-table"></i>
                         </div>
                         <div>
-                            <h2 class="section-title mb-1">Daftar Jadwal Pelajaran Sekolah</h2>
-                            <p class="section-description mb-0">Tampilan seluruh rombel sesuai putaran blok aktif saat ini.</p>
+                            <h2 class="section-title mb-1">
+                                @if($isStudent)
+                                    Daftar Jadwal Kelas {{ $user->schoolClass?->name ?? 'Saya' }}
+                                @elseif($isParent)
+                                    Daftar Jadwal Kelas Ananda
+                                @elseif($roleName === 'guru')
+                                    Daftar Jadwal Mengajar Saya (Jadwal yang Sudah Diinput)
+                                @elseif($roleName === 'wali_kelas')
+                                    Daftar Jadwal Kelas Binaan
+                                @else
+                                    Daftar Jadwal Pelajaran Sekolah
+                                @endif
+                            </h2>
+                            <p class="section-description mb-0">
+                                @if($isStudent)
+                                    Jadwal KBM khusus kelas {{ $user->schoolClass?->name ?? 'Anda' }} sesuai putaran blok aktif saat ini.
+                                @elseif($isParent)
+                                    Jadwal KBM khusus kelas putra/putri Anda sesuai putaran blok aktif saat ini.
+                                @elseif($roleName === 'guru')
+                                    Menampilkan khusus jadwal KBM milik Anda sendiri yang sudah Anda input pada putaran blok aktif saat ini.
+                                @else
+                                    Tampilan jadwal KBM sesuai putaran blok aktif saat ini.
+                                @endif
+                            </p>
                         </div>
                     </div>
                     @if($user->role->name === 'waka')
@@ -371,7 +451,18 @@
 
                 <div class="alert alert-info py-2.5 px-3 mb-3 small d-flex align-items-center gap-2 border-0 rounded-3" style="background: #eff6ff; color: #174ea6;">
                     <i class="bi bi-info-circle-fill fs-6"></i>
-                    <span><strong>Putaran {{ $activeRound }}</strong> sedang aktif secara global. Jadwal KBM di bawah menampilkan kelas pada putaran ini.</span>
+                    <span>
+                        <strong>Putaran {{ $activeRound }}</strong> sedang aktif secara global.
+                        @if($isStudent)
+                            Jadwal di bawah khusus menampilkan jam pelajaran kelas {{ $user->schoolClass?->name ?? 'Anda' }} pada putaran ini.
+                        @elseif($isParent)
+                            Jadwal di bawah khusus menampilkan jam pelajaran kelas putra/putri Anda pada putaran ini.
+                        @elseif($roleName === 'guru')
+                            Jadwal di bawah khusus menampilkan jadwal mengajar milik Anda sendiri yang sudah diinput pada putaran ini.
+                        @else
+                            Jadwal KBM di bawah menampilkan kelas pada putaran ini.
+                        @endif
+                    </span>
                 </div>
 
                 @if($scheduleLock?->is_locked ?? false)
@@ -380,6 +471,44 @@
                         <span>Jadwal dikunci oleh Waka Kurikulum. Guru pengajar tidak dapat mengubah atau menambah jadwal KBM baru.</span>
                     </div>
                 @endif
+
+                <!-- FORM FILTER DATA JADWAL -->
+                <form action="{{ route('schedules.index') }}" method="GET" class="p-3 bg-light rounded-3 border mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="{{ ($isStudent || $isParent) ? 'col-sm-8 col-md-5' : 'col-sm-6 col-md-3' }}">
+                            <label class="form-label small fw-bold mb-1">Filter Hari</label>
+                            <select name="day" class="form-select form-select-sm">
+                                <option value="">Semua Hari (Senin - Jumat)</option>
+                                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $day)
+                                    <option value="{{ $day }}" @selected(request('day') === $day)>{{ $day }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @if(!$isStudent && !$isParent)
+                            <div class="col-sm-6 col-md-4">
+                                <label class="form-label small fw-bold mb-1">Kelas</label>
+                                <select name="class_id" class="form-select form-select-sm">
+                                    <option value="">Semua Kelas</option>
+                                    @foreach($classes as $c)
+                                        <option value="{{ $c->id }}" @selected(request('class_id') == $c->id)>{{ $c->name }} ({{ $c->major?->name ?? '-' }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
+                        <div class="{{ ($isStudent || $isParent) ? 'col-sm-4 col-md-3' : 'col-sm-12 col-md-2' }} d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-grow-1 fw-bold">
+                                <i class="bi bi-funnel-fill me-1"></i> Filter Hari
+                            </button>
+                            @if(request()->filled('day') || (!$isStudent && !$isParent && request()->filled('class_id')))
+                                <a href="{{ route('schedules.index') }}" class="btn btn-outline-secondary btn-sm" title="Reset Filter">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </form>
 
                 <div class="table-responsive">
                     <table class="table align-middle">
@@ -425,7 +554,21 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-5">Belum ada data jadwal untuk putaran aktif ini.</td>
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="bi bi-calendar-x fs-2 d-block text-secondary mb-2"></i>
+                                        @if($isStudent)
+                                            <strong>Belum Ada Jadwal KBM untuk Kelas Anda</strong><br>
+                                            <span class="small">Belum ada mata pelajaran yang terjadwal untuk kelas {{ $user->schoolClass?->name ?? 'Anda' }} pada putaran aktif ini.</span>
+                                        @elseif($isParent)
+                                            <strong>Belum Ada Jadwal KBM untuk Kelas Ananda</strong><br>
+                                            <span class="small">Belum ada mata pelajaran yang terjadwal untuk kelas putra/putri Anda pada putaran aktif ini.</span>
+                                        @elseif($roleName === 'guru')
+                                            <strong>Belum Ada Jadwal Mengajar yang Anda Input</strong><br>
+                                            <span class="small">Anda belum memiliki jadwal mengajar yang diinput pada putaran aktif ini.</span>
+                                        @else
+                                            Belum ada data jadwal untuk putaran aktif ini.
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

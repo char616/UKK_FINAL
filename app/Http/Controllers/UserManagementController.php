@@ -29,22 +29,23 @@ class UserManagementController extends Controller
 
         return view('accounts.index', [
             'user' => auth()->user(),
-            'users' => User::with(['role', 'schoolClass'])
+            'users' => User::with(['role', 'schoolClass', 'students'])
                 ->when($selectedRole, function ($query) use ($selectedRole): void {
-                    if ($selectedRole === 'orang_tua') {
-                        $query->whereNotNull('parent_name');
-                        return;
-                    }
-
                     $query->whereHas('role', fn ($roleQuery) => $roleQuery->where('name', $selectedRole));
                 })
                 ->when($search !== '', function ($query) use ($search): void {
-                    $query->where('name', 'like', "%{$search}%");
+                    $query->where(function ($subQuery) use ($search): void {
+                        $subQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('login_key', 'like', "%{$search}%")
+                            ->orWhere('nip', 'like', "%{$search}%")
+                            ->orWhere('nis', 'like', "%{$search}%")
+                            ->orWhere('parent_name', 'like', "%{$search}%");
+                    });
                 })
                 ->orderBy('name')
                 ->paginate(25)
                 ->withQueryString(),
-            'roles' => Role::whereIn('name', ['waka', 'bk', 'wali_kelas', 'guru', 'siswa'])->orderBy('id')->get(),
+            'roles' => Role::whereIn('name', self::ROLE_NAMES)->orderBy('id')->get(),
             'classes' => Classes::orderBy('name')->get(),
             'selectedRole' => $selectedRole,
             'search' => $search,
@@ -58,13 +59,13 @@ class UserManagementController extends Controller
 
         if ($roleInput === 'siswa' && ! preg_match('/^\d+$/', $loginKeyInput)) {
             throw ValidationException::withMessages([
-                'login_key' => 'Login ID untuk siswa harus berupa angka (NIS).',
+                'login_key' => 'ID Login untuk akun Siswa harus berupa angka (NIS / NISN).',
             ]);
         }
 
-        if ($roleInput === 'orang_tua' && ! preg_match('/^ortu_\d+$/i', $loginKeyInput)) {
+        if ($roleInput === 'orang_tua' && ! preg_match('/^(ortu_\d+|.+_ortu)$/i', $loginKeyInput)) {
             throw ValidationException::withMessages([
-                'login_key' => 'Login ID untuk orang tua harus menggunakan format ortu_[NIS].',
+                'login_key' => 'ID Login untuk akun Orang Tua harus menggunakan format nama_siswa_ortu atau ortu_[NIS].',
             ]);
         }
 
@@ -152,8 +153,15 @@ class UserManagementController extends Controller
             'parent_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'recovery_email' => ['nullable', 'email', 'max:255'],
+            'is_active' => ['nullable', 'boolean'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
+
+        if ($request->has('is_active') && ! $request->boolean('is_active') && (int) $user->id === (int) Auth::id()) {
+            throw ValidationException::withMessages([
+                'is_active' => 'Anda tidak dapat menonaktifkan akun WAKA Anda sendiri.',
+            ]);
+        }
 
         DB::transaction(function () use ($request, $validated, $user): void {
             $roleName = optional($user->role)->name;
@@ -161,7 +169,7 @@ class UserManagementController extends Controller
                 'name' => trim($validated['name']),
                 'email' => trim($validated['email']),
                 'recovery_email' => ! empty($validated['recovery_email']) ? trim($validated['recovery_email']) : null,
-                'is_active' => true,
+                'is_active' => $request->has('is_active') ? $request->boolean('is_active') : true,
             ];
 
             // Update NIP untuk Guru / Wali Kelas tanpa merusak relasi jadwal/presensi (karena relasi memakai users.id)

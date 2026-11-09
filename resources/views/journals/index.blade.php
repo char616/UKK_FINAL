@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Mengajar | SCP2</title>
+    <title>{{ $user->role->name === 'waka' ? 'Monitoring Jurnal Mengajar Guru' : 'Jurnal Mengajar' }} | SCP System</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,8 +20,8 @@
             --primary-light: #EAF2FF;
             --background: #F4F7FB;
             --surface: #FFFFFF;
-            --text: #253449;
-            --muted: #718096;
+            --text: #1E293B;
+            --muted: #64748B;
             --border: #E2E8F0;
             --success: #16845B;
             --danger: #C24141;
@@ -54,22 +54,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .page-breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            margin-bottom: 8px;
-            color: var(--muted);
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .page-breadcrumb .current {
-            color: var(--primary);
-            font-weight: 700;
+            margin-bottom: 24px;
         }
 
         .page-title {
@@ -77,36 +62,14 @@
             color: #1E3552;
             font-size: 24px;
             font-weight: 800;
-            letter-spacing: -.7px;
+            letter-spacing: -.5px;
         }
 
         .page-description {
             margin: 0;
             color: var(--muted);
-            font-size: 11px;
-            line-height: 1.7;
-        }
-
-        .header-date {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 11px 14px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--surface);
-        }
-
-        .header-date i {
-            color: var(--primary);
-            font-size: 17px;
-        }
-
-        .header-date span {
-            color: var(--text);
-            font-size: 10px;
-            font-weight: 700;
-            white-space: nowrap;
+            font-size: 12.5px;
+            line-height: 1.65;
         }
 
         /* HERO */
@@ -117,12 +80,12 @@
             gap: 20px;
             position: relative;
             overflow: hidden;
-            padding: 25px 28px;
-            margin-bottom: 22px;
+            padding: 26px 30px;
+            margin-bottom: 24px;
             color: #FFFFFF;
             background: linear-gradient(110deg, #174EA6 0%, #2563EB 100%);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(23, 78, 166, .10);
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(23, 78, 166, .14);
         }
 
         .hero-banner::after {
@@ -130,9 +93,9 @@
             position: absolute;
             right: 75px;
             top: -100px;
-            width: 200px;
-            height: 200px;
-            border: 30px solid rgba(255,255,255,.07);
+            width: 220px;
+            height: 220px;
+            border: 32px solid rgba(255,255,255,.07);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -140,35 +103,42 @@
         .hero-content {
             position: relative;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
         }
 
         .hero-label {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            padding: 6px 10px;
-            margin-bottom: 11px;
-            border: 1px solid rgba(255,255,255,.2);
-            border-radius: 5px;
-            background: rgba(255,255,255,.12);
+            padding: 6px 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,.22);
+            border-radius: 999px;
+            background: rgba(255,255,255,.14);
             color: #FFFFFF;
-            font-size: 9px;
+            font-size: 10.5px;
             font-weight: 700;
             letter-spacing: .5px;
             text-transform: uppercase;
         }
 
         .hero-banner h2 {
-            margin: 0 0 7px;
-            font-size: 19px;
+            margin: 0 0 8px;
+            font-size: 21px;
             font-weight: 800;
             letter-spacing: -.4px;
         }
 
         .hero-banner p {
             margin: 0;
-            color: rgba(255,255,255,.82);
-            font-size: 11px;
+            color: rgba(255,255,255,.88);
+            font-size: 12.5px;
+            line-height: 1.65;
+            max-width: 720px;
         }
 
         .hero-icon {
@@ -176,14 +146,14 @@
             z-index: 1;
             display: grid;
             place-items: center;
-            width: 55px;
-            height: 55px;
+            width: 58px;
+            height: 58px;
             flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,.18);
-            border-radius: 10px;
-            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 14px;
+            background: rgba(255,255,255,.14);
             color: white;
-            font-size: 24px;
+            font-size: 26px;
         }
 
         /* ALERT */
@@ -191,10 +161,10 @@
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            padding: 12px 15px;
-            margin-bottom: 17px;
-            border-radius: 7px;
-            font-size: 11px;
+            padding: 13px 16px;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            font-size: 12.5px;
             line-height: 1.6;
         }
 
@@ -204,15 +174,73 @@
         }
 
         .notice-success {
-            color: #23764F;
-            background: #EAF7F0;
-            border: 1px solid #D5EDDF;
+            color: #166534;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
         }
 
         .notice-error {
-            color: #B33F3F;
-            background: #FFF1F1;
-            border: 1px solid #F3DADA;
+            color: #B91C1C;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+        }
+
+        /* SUMMARY STAT CARDS */
+        .waka-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .waka-stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .03);
+        }
+
+        .waka-stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .waka-stat-icon.blue {
+            background: #EFF6FF;
+            color: #174EA6;
+        }
+
+        .waka-stat-icon.amber {
+            background: #FFFBEB;
+            color: #D97706;
+        }
+
+        .waka-stat-icon.green {
+            background: #ECFDF5;
+            color: #059669;
+        }
+
+        .waka-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0F172A;
+            line-height: 1.15;
+            margin-bottom: 2px;
+        }
+
+        .waka-stat-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--muted);
         }
 
         /* CARD */
@@ -221,46 +249,46 @@
             overflow: hidden;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 9px;
-            box-shadow: 0 2px 8px rgba(31,52,73,.035);
+            border-radius: 16px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .035);
         }
 
         .card-header-custom {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 18px 20px;
+            gap: 14px;
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border);
         }
 
         .card-icon {
             display: grid;
             place-items: center;
-            width: 37px;
-            height: 37px;
+            width: 42px;
+            height: 42px;
             flex-shrink: 0;
-            border-radius: 8px;
+            border-radius: 11px;
             background: var(--primary-light);
             color: var(--primary);
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .card-heading {
-            margin: 0 0 4px;
-            color: #203957;
-            font-size: 12px;
+            margin: 0 0 3px;
+            color: #1E293B;
+            font-size: 15px;
             font-weight: 800;
         }
 
         .card-subheading {
             margin: 0;
             color: var(--muted);
-            font-size: 10px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.55;
         }
 
         .card-body-custom {
-            padding: 20px;
+            padding: 22px 24px;
         }
 
         /* FORM */
@@ -270,9 +298,9 @@
 
         .form-label {
             display: block;
-            margin-bottom: 7px;
-            color: #34445A;
-            font-size: 11px;
+            margin-bottom: 6px;
+            color: #334155;
+            font-size: 12px;
             font-weight: 700;
         }
 
@@ -285,17 +313,17 @@
         .form-select {
             min-height: 40px;
             padding: 9px 12px;
-            border: 1px solid #DCE4ED;
-            border-radius: 6px;
+            border: 1px solid #CBD5E1;
+            border-radius: 9px;
             background: #FFFFFF;
             color: var(--text);
             font-family: inherit;
-            font-size: 11px;
+            font-size: 12.5px;
             box-shadow: none;
         }
 
         .form-control::placeholder {
-            color: #A0ACBA;
+            color: #94A3B8;
         }
 
         textarea.form-control {
@@ -306,12 +334,12 @@
         .form-control:focus,
         .form-select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(23,78,166,.09);
+            box-shadow: 0 0 0 3px rgba(23,78,166,.10);
         }
 
         .form-text {
             color: var(--muted);
-            font-size: 10px;
+            font-size: 11px;
             line-height: 1.6;
         }
 
@@ -320,17 +348,18 @@
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
-            min-height: 39px;
-            padding: 9px 15px;
+            gap: 7px;
+            min-height: 40px;
+            padding: 9px 16px;
             border: 1px solid var(--primary);
-            border-radius: 6px;
+            border-radius: 9px;
             background: var(--primary);
             color: #FFFFFF;
             font-family: inherit;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             transition: .2s ease;
+            text-decoration: none;
         }
 
         .btn-primary-custom:hover {
@@ -344,20 +373,21 @@
             justify-content: center;
             align-items: center;
             gap: 6px;
-            min-height: 35px;
-            padding: 8px 11px;
-            border: 1px solid #D5DFEA;
-            border-radius: 6px;
+            min-height: 36px;
+            padding: 8px 13px;
+            border: 1px solid #CBD5E1;
+            border-radius: 9px;
             background: #FFFFFF;
             color: var(--primary);
             font-family: inherit;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             transition: .2s ease;
+            text-decoration: none;
         }
 
         .btn-outline-custom:hover {
-            border-color: #B7CCEB;
+            border-color: #93C5FD;
             background: var(--primary-light);
             color: var(--primary-dark);
         }
@@ -366,134 +396,84 @@
         .monitor-filter {
             display: flex;
             align-items: flex-end;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .monitor-box {
-            padding: 16px;
-            margin: 18px 20px 20px;
+            padding: 18px 20px;
+            margin: 18px 24px 24px;
             border: 1px solid var(--border);
-            border-radius: 7px;
-            background: #F8FAFD;
+            border-radius: 12px;
+            background: #F8FAFC;
         }
 
         .monitor-stat {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 11px;
-            color: var(--muted);
-            font-size: 11px;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 14px;
+            color: #334155;
+            font-size: 12.5px;
         }
 
         .monitor-stat strong {
-            color: var(--primary);
+            color: #B45309;
+            font-weight: 800;
         }
 
         .monitor-list {
             padding: 0;
-            margin: 0 0 15px;
+            margin: 0 0 16px;
             list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
         }
 
         .monitor-list li {
             display: flex;
-            gap: 9px;
-            padding: 10px 0;
-            border-bottom: 1px solid #E8EDF3;
-            color: #536477;
-            font-size: 10px;
-            line-height: 1.6;
-        }
-
-        .monitor-list li:last-child {
-            border-bottom: 0;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px 14px;
+            border: 1px solid #FDE68A;
+            border-radius: 10px;
+            background: #FFFBEB;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         .monitor-list i {
             flex-shrink: 0;
-            color: #D49A37;
+            color: #D97706;
+            font-size: 15px;
+            margin-top: 1px;
         }
 
         .monitor-empty {
             display: flex;
             align-items: center;
-            gap: 9px;
-            color: var(--success);
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        /* CAMERA */
-        .camera-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-            margin-bottom: 10px;
-        }
-
-        .camera-box {
-            padding: 5px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            border-radius: 7px;
-            background: #1E293B;
-        }
-
-        #camera-preview {
-            display: block;
-            width: 100%;
-            max-height: 260px;
-            border-radius: 5px;
-            object-fit: cover;
-        }
-
-        .attachment-preview {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            background: #F8FAFC;
-        }
-
-        #attachment-thumb {
-            width: 55px;
-            height: 55px;
-            flex-shrink: 0;
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            object-fit: cover;
-        }
-
-        .attachment-info {
-            min-width: 0;
-            overflow-wrap: anywhere;
-            color: var(--muted);
-            font-size: 10px;
-        }
-
-        .attachment-info strong {
-            display: block;
-            margin-bottom: 4px;
-            color: var(--text);
+            color: #15803D;
+            font-size: 13px;
+            font-weight: 700;
         }
 
         /* TABLE */
         .journal-table {
-            min-width: 650px;
+            min-width: 720px;
             margin: 0;
             vertical-align: middle;
         }
 
         .journal-table thead th {
-            padding: 13px 14px;
+            padding: 14px 18px;
             border-bottom: 1px solid var(--border);
-            background: #F7F9FC;
-            color: #64748B;
-            font-size: 9px;
+            background: #F8FAFC;
+            color: #475569;
+            font-size: 11px;
             font-weight: 800;
             letter-spacing: .4px;
             text-transform: uppercase;
@@ -501,9 +481,9 @@
         }
 
         .journal-table tbody td {
-            padding: 14px;
-            border-bottom: 1px solid #EDF1F5;
-            font-size: 10px;
+            padding: 16px 18px;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 12.5px;
         }
 
         .journal-table tbody tr:last-child td {
@@ -511,72 +491,77 @@
         }
 
         .journal-table tbody tr:hover {
-            background: #FAFCFF;
+            background: #F8FAFF;
         }
 
         .table-primary-text {
             display: block;
             margin-bottom: 4px;
-            color: #263E5A;
-            font-size: 10px;
+            color: #1E293B;
+            font-size: 13px;
             font-weight: 700;
         }
 
         .table-secondary-text {
             display: block;
             color: var(--muted);
-            font-size: 9px;
-            line-height: 1.6;
+            font-size: 11.5px;
+            line-height: 1.55;
         }
 
         .date-label {
-            color: #536477;
-            font-weight: 600;
+            display: block;
+            color: #1E293B;
+            font-size: 12.5px;
+            font-weight: 700;
             white-space: nowrap;
         }
 
         .evidence-link {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 7px 9px;
-            border: 1px solid #C9D9ED;
-            border-radius: 5px;
-            background: #F4F8FF;
+            gap: 6px;
+            padding: 7px 12px;
+            border: 1px solid #BFDBFE;
+            border-radius: 8px;
+            background: #EFF6FF;
             color: var(--primary);
-            font-size: 9px;
+            font-size: 11.5px;
             font-weight: 700;
             text-decoration: none;
             white-space: nowrap;
+            cursor: pointer;
+            transition: .18s ease;
         }
 
         .evidence-link:hover {
             background: var(--primary);
+            border-color: var(--primary);
             color: #FFFFFF;
         }
 
         .empty-state {
-            padding: 45px 15px !important;
+            padding: 52px 20px !important;
             text-align: center;
         }
 
         .empty-state i {
             display: block;
             margin-bottom: 10px;
-            color: #9AAABD;
-            font-size: 30px;
+            color: #94A3B8;
+            font-size: 34px;
         }
 
         .empty-state strong {
             display: block;
             margin-bottom: 5px;
-            color: #344B67;
-            font-size: 11px;
+            color: #1E293B;
+            font-size: 14px;
         }
 
         .empty-state span {
             color: var(--muted);
-            font-size: 10px;
+            font-size: 12.5px;
         }
 
         /* RESPONSIVE */
@@ -586,6 +571,10 @@
                 margin-left: 0 !important;
                 padding: 88px 22px 35px !important;
             }
+
+            .waka-summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -593,10 +582,6 @@
                 width: 100%;
                 margin-left: 0;
                 padding: 82px 16px 30px !important;
-            }
-
-            .header-date {
-                display: none;
             }
 
             .page-title {
@@ -608,16 +593,16 @@
             }
 
             .hero-banner h2 {
-                font-size: 17px;
+                font-size: 18px;
             }
 
             .card-header-custom,
             .card-body-custom {
-                padding: 15px;
+                padding: 16px;
             }
 
             .monitor-box {
-                margin: 14px 15px 15px;
+                margin: 14px 16px 16px;
             }
         }
 
@@ -649,11 +634,13 @@
         <div class="page-header">
             <div>
                 <div class="page-eyebrow">
-                    <i class="bi bi-journal-text"></i>
-                    Manajemen KBM
+                    <i class="bi {{ $user->role->name === 'waka' ? 'bi-clipboard2-pulse-fill' : 'bi-journal-text' }}"></i>
+                    {{ $user->role->name === 'waka' ? 'Pengawasan Kurikulum & KBM' : 'Manajemen KBM' }}
                 </div>
 
-                <h1 class="page-title">Jurnal Mengajar</h1>
+                <h1 class="page-title">
+                    {{ $user->role->name === 'waka' ? 'Monitoring Jurnal Mengajar Guru' : 'Jurnal Mengajar' }}
+                </h1>
             </div>
 
             <div class="academic-badge">
@@ -667,19 +654,25 @@
             <div class="hero-content">
                 <div class="hero-text">
                     <div class="hero-label">
-                        <i class="bi bi-journal-check"></i>
-                        SCHOOL CLASS PROGRESS
+                        <i class="bi {{ $user->role->name === 'waka' ? 'bi-shield-check' : 'bi-journal-check' }}"></i>
+                        {{ $user->role->name === 'waka' ? 'MONITORING JURNAL MENGAJAR GURU' : 'SCHOOL CLASS PROGRESS' }}
                     </div>
 
-                    <h2 class="hero-title">Jurnal Mengajar</h2>
+                    <h2 class="hero-title">
+                        {{ $user->role->name === 'waka' ? 'Pemantauan Jurnal Mengajar & Pelaksanaan KBM' : 'Jurnal Mengajar' }}
+                    </h2>
 
                     <p class="hero-description">
-                        Catat dan pantau kegiatan belajar mengajar.
+                        @if($user->role->name === 'waka')
+                            Pantau kepatuhan pengisian jurnal mengajar harian oleh Guru, periksa jadwal KBM yang belum memiliki laporan jurnal, tinjau kesesuaian materi pembelajaran, serta verifikasi dokumentasi foto bukti KBM secara terpusat.
+                        @else
+                            Tinjau riwayat laporan pelaksanaan kegiatan belajar mengajar (KBM), materi pokok, catatan pembelajaran, serta bukti foto dokumentasi kelas.
+                        @endif
                     </p>
                 </div>
 
                 <div class="hero-icon">
-                    <i class="bi bi-journal-bookmark"></i>
+                    <i class="bi {{ $user->role->name === 'waka' ? 'bi-clipboard-data' : 'bi-journal-bookmark' }}"></i>
                 </div>
             </div>
         </section>
@@ -701,26 +694,63 @@
 
         <!-- MONITORING WAKA -->
         @if($user->role->name === 'waka')
-            <section class="custom-card mb-4">
-
-                <div class="card-header-custom">
-                    <div class="card-icon">
-                        <i class="bi bi-clipboard-data"></i>
+            <div class="waka-summary-grid">
+                <div class="waka-stat-card">
+                    <div class="waka-stat-icon blue">
+                        <i class="bi bi-journal-check"></i>
                     </div>
-
                     <div>
-                        <h2 class="card-heading">Monitoring Jurnal Guru</h2>
-                        <p class="card-subheading">
-                            Periksa jadwal pembelajaran yang belum memiliki jurnal.
-                        </p>
+                        <div class="waka-stat-value">{{ $journals->total() }}</div>
+                        <div class="waka-stat-label">Total Laporan Jurnal Tercatat</div>
                     </div>
+                </div>
+
+                <div class="waka-stat-card">
+                    <div class="waka-stat-icon {{ $schedulesWithoutJournal->isEmpty() ? 'green' : 'amber' }}">
+                        <i class="bi {{ $schedulesWithoutJournal->isEmpty() ? 'bi-check2-circle' : 'bi-exclamation-triangle-fill' }}"></i>
+                    </div>
+                    <div>
+                        <div class="waka-stat-value">{{ $schedulesWithoutJournal->count() }}</div>
+                        <div class="waka-stat-label">Jadwal Belum Mengisi Jurnal ({{ \Carbon\Carbon::parse($journalDate)->translatedFormat('d M Y') }})</div>
+                    </div>
+                </div>
+
+                <div class="waka-stat-card">
+                    <div class="waka-stat-icon {{ $schedulesWithoutJournal->isEmpty() ? 'green' : 'amber' }}">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div>
+                        <div class="waka-stat-value">{{ $schedulesWithoutJournal->groupBy('teacher_id')->count() }}</div>
+                        <div class="waka-stat-label">Guru Belum Melengkapi Jurnal</div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="custom-card mb-4">
+                <div class="card-header-custom justify-content-between flex-wrap">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="card-icon">
+                            <i class="bi bi-clipboard-data"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="card-heading">Evaluasi Kepatuhan Pengisian Jurnal Guru</h2>
+                            <p class="card-subheading">
+                                Pantau jadwal mengajar Guru yang belum dilengkapi jurnal pada tanggal pelaksanaan KBM dan kirimkan pengingat otomatis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-bold" style="font-size: 11px;">
+                        <i class="bi bi-eye-fill me-1"></i> Mode Pemantauan WAKA
+                    </span>
                 </div>
 
                 <div class="card-body-custom pb-0">
                     <form action="{{ route('journals.index') }}" method="GET" class="monitor-filter">
-                        <div style="max-width: 230px; width: 100%;">
+                        <div style="max-width: 260px; width: 100%;">
                             <label for="journal-date" class="form-label">
-                                Tanggal Monitoring
+                                Tanggal Pemantauan KBM
                             </label>
 
                             <input
@@ -736,29 +766,32 @@
 
                         <button type="submit" class="btn-primary-custom">
                             <i class="bi bi-search"></i>
-                            Periksa Jurnal
+                            Periksa Kepatuhan Jurnal
                         </button>
+
+                        <a href="{{ route('journals.index', ['date' => now()->toDateString()]) }}" class="btn-outline-custom">
+                            <i class="bi bi-calendar-check"></i>
+                            Hari Ini
+                        </a>
                     </form>
                 </div>
 
                 <div class="monitor-box">
                     @if($schedulesWithoutJournal->isEmpty())
-
                         <div class="monitor-empty">
-                            <i class="bi bi-check-circle-fill"></i>
+                            <i class="bi bi-check-circle-fill fs-5"></i>
                             <span>
-                                Tidak ada jurnal tertinggal untuk jadwal pada tanggal
-                                {{ $journalDate }}.
+                                Seluruh jadwal mengajar pada tanggal {{ \Carbon\Carbon::parse($journalDate)->translatedFormat('d F Y') }} telah dilengkapi jurnal mengajar oleh Guru.
                             </span>
                         </div>
-
                     @else
-
                         <div class="monitor-stat">
-                            <span>Terdapat</span>
-                            <strong>{{ $schedulesWithoutJournal->count() }} jadwal</strong>
-                            <span>yang belum memiliki jurnal dari</span>
-                            <strong>{{ $schedulesWithoutJournal->groupBy('teacher_id')->count() }} guru.</strong>
+                            <i class="bi bi-info-circle-fill text-warning me-1"></i>
+                            <span>Ditemukan</span>
+                            <strong>{{ $schedulesWithoutJournal->count() }} jadwal pelajaran</strong>
+                            <span>yang belum memiliki laporan jurnal mengajar dari</span>
+                            <strong>{{ $schedulesWithoutJournal->groupBy('teacher_id')->count() }} Guru</strong>
+                            <span>pada tanggal {{ \Carbon\Carbon::parse($journalDate)->translatedFormat('d F Y') }}:</span>
                         </div>
 
                         <ul class="monitor-list">
@@ -766,15 +799,14 @@
                                 <li>
                                     <i class="bi bi-exclamation-circle-fill"></i>
 
-                                    <span>
-                                        <strong>{{ $schedule->teacher?->name ?? '-' }}</strong>
-                                        &mdash;
-                                        {{ $schedule->day }},
-                                        {{ substr($schedule->start_time, 0, 5) }}:
-                                        {{ $schedule->class?->name ?? '-' }}
-                                        /
-                                        {{ $schedule->subject?->name ?? '-' }}
-                                    </span>
+                                    <div>
+                                        <strong class="d-block text-dark">{{ $schedule->teacher?->name ?? '-' }}</strong>
+                                        <span class="text-muted">
+                                            {{ $schedule->day }}, {{ $schedule->session_label ?? substr($schedule->start_time, 0, 5) }} &bull;
+                                            <span class="fw-semibold text-primary">{{ $schedule->class?->name ?? '-' }}</span> &mdash;
+                                            {{ $schedule->subject?->name ?? '-' }}
+                                        </span>
+                                    </div>
                                 </li>
                             @endforeach
                         </ul>
@@ -785,11 +817,10 @@
                             <input type="hidden" name="date" value="{{ $journalDate }}">
 
                             <button type="submit" class="btn-primary-custom">
-                                <i class="bi bi-bell"></i>
-                                Kirim Pengingat ke Guru
+                                <i class="bi bi-bell-fill"></i>
+                                Kirim Pengingat ke Guru Terkait
                             </button>
                         </form>
-
                     @endif
                 </div>
             </section>
@@ -824,7 +855,7 @@
                         <div class="custom-card p-3 mb-2">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <strong class="table-primary-text"><i class="bi bi-calendar-week me-1 text-primary"></i>Jadwal Mengajar Hari Ini ({{ $todayDay ?? 'Hari Ini' }})</strong>
-                                <a href="{{ route('attendances.index') }}" class="btn-outline-custom py-1 px-2" style="font-size:10px;">Buka Presensi & Jurnal Terpadu</a>
+                                <a href="{{ route('attendances.index') }}" class="btn-outline-custom py-1 px-2" style="font-size:11px;">Buka Presensi & Jurnal Terpadu</a>
                             </div>
                             <div class="d-flex flex-wrap gap-2">
                                 @foreach($schedules as $sched)
@@ -838,32 +869,42 @@
                 @endif
             @endif
 
-            <!-- RIWAYAT JURNAL -->
+            <!-- DAFTAR / MONITORING LAPORAN JURNAL -->
             <div class="col-12">
                 <section class="custom-card">
 
                     <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-3">
                             <div class="card-icon">
-                                <i class="bi bi-clock-history"></i>
+                                <i class="bi {{ $user->role->name === 'waka' ? 'bi-journal-richtext' : 'bi-clock-history' }}"></i>
                             </div>
                             <div>
-                                <h2 class="card-heading">Riwayat Jurnal Mengajar</h2>
+                                <h2 class="card-heading">
+                                    {{ $user->role->name === 'waka' ? 'Daftar Laporan Jurnal Mengajar Guru' : 'Riwayat Jurnal Mengajar' }}
+                                </h2>
                                 <p class="card-subheading">
-                                    Daftar laporan kegiatan pembelajaran yang telah dicatat.
+                                    @if($user->role->name === 'waka')
+                                        Rekapitulasi laporan kegiatan belajar mengajar (KBM), materi pokok, catatan kelas, serta bukti dokumentasi foto yang telah dikirimkan oleh Guru.
+                                    @else
+                                        Daftar laporan kegiatan pembelajaran yang telah dicatat oleh Guru.
+                                    @endif
                                 </p>
                             </div>
                         </div>
+
+                        <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill fw-semibold" style="font-size: 11px;">
+                            Total Data: {{ $journals->total() }} Jurnal
+                        </span>
                     </div>
 
                     <!-- FORM FILTER DATA JURNAL -->
                     <div class="p-3 bg-light border-bottom">
                         <form action="{{ route('journals.index') }}" method="GET" class="row g-2 align-items-end">
                             <div class="col-sm-6 col-md-3">
-                                <label class="form-label small fw-bold mb-1">Filter Tanggal</label>
+                                <label class="form-label small fw-bold mb-1">Filter Tanggal KBM</label>
                                 <div class="input-group input-group-sm">
-                                    <input type="date" name="date" class="form-control" value="{{ request('date', $journalDate ?? '') }}">
-                                    <a href="{{ route('journals.index', array_merge(request()->except('date', 'page'), ['date' => now()->toDateString()])) }}" class="btn btn-outline-secondary" title="Hari Ini">
+                                    <input type="date" name="date" class="form-control" value="{{ request('date', '') }}">
+                                    <a href="{{ route('journals.index', array_merge(request()->except('date', 'page'), ['date' => now()->toDateString()])) }}" class="btn btn-outline-secondary" title="Tampilkan Jurnal Hari Ini">
                                         Hari Ini
                                     </a>
                                 </div>
@@ -882,7 +923,7 @@
                             <div class="col-sm-6 col-md-3">
                                 <label class="form-label small fw-bold mb-1">Mata Pelajaran</label>
                                 <select name="subject_id" class="form-select form-select-sm">
-                                    <option value="">Semua Mapel</option>
+                                    <option value="">Semua Mata Pelajaran</option>
                                     @foreach($subjects as $s)
                                         <option value="{{ $s->id }}" @selected(request('subject_id') == $s->id)>{{ $s->name }}</option>
                                     @endforeach
@@ -891,7 +932,7 @@
 
                             @if($user->role->name === 'waka')
                                 <div class="col-sm-6 col-md-2">
-                                    <label class="form-label small fw-bold mb-1">Guru</label>
+                                    <label class="form-label small fw-bold mb-1">Guru Pengajar</label>
                                     <select name="teacher_id" class="form-select form-select-sm">
                                         <option value="">Semua Guru</option>
                                         @foreach($teachers as $t)
@@ -903,11 +944,11 @@
 
                             <div class="col-sm-12 col-md d-flex gap-1">
                                 <button type="submit" class="btn btn-primary btn-sm flex-grow-1 fw-bold">
-                                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                                    <i class="bi bi-funnel-fill me-1"></i> Terapkan
                                 </button>
                                 @if(request()->hasAny(['date', 'class_id', 'subject_id', 'teacher_id']))
                                     <a href="{{ route('journals.index') }}" class="btn btn-outline-secondary btn-sm" title="Reset Filter">
-                                        <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-arrow-counterclockwise"></i>
                                     </a>
                                 @endif
                             </div>
@@ -920,13 +961,13 @@
                                 <thead>
                                     <tr>
                                         @if($user->role->name !== 'guru')
-                                            <th>Guru</th>
+                                            <th>Guru Pengajar</th>
                                         @endif
 
-                                        <th>Tanggal</th>
-                                        <th>Kelas & Mapel</th>
-                                        <th>Materi & Ringkasan</th>
-                                        <th>Bukti</th>
+                                        <th>Tanggal & Sesi KBM</th>
+                                        <th>Kelas & Mata Pelajaran</th>
+                                        <th>Materi Pokok & Ringkasan KBM</th>
+                                        <th>Dokumentasi Bukti</th>
                                     </tr>
                                 </thead>
 
@@ -938,6 +979,11 @@
                                                     <span class="table-primary-text">
                                                         {{ $jurnal->teacher?->name ?? '-' }}
                                                     </span>
+                                                    @if($jurnal->teacher?->nip)
+                                                        <span class="table-secondary-text font-monospace">
+                                                            NIP: {{ $jurnal->teacher->nip }}
+                                                        </span>
+                                                    @endif
                                                 </td>
                                             @endif
 
@@ -945,7 +991,7 @@
                                                 <span class="date-label">
                                                     {{ \Carbon\Carbon::parse($jurnal->date)->translatedFormat('d M Y') }}
                                                 </span>
-                                                <span class="badge bg-light text-primary border font-monospace mt-1 d-inline-block" style="font-size:9px;">
+                                                <span class="badge bg-light text-primary border font-monospace mt-1 d-inline-block" style="font-size:10.5px;">
                                                     <i class="bi bi-clock-history me-1"></i>{{ $jurnal->schedule?->session_label ?? '-' }}
                                                 </span>
                                             </td>
@@ -959,7 +1005,7 @@
                                                     {{ $jurnal->schedule?->subject?->name ?? '-' }}@if($jurnal->schedule?->subject?->code) ({{ $jurnal->schedule->subject->code }})@endif
                                                 </span>
                                                 @if($jurnal->schedule?->room)
-                                                    <span class="table-secondary-text d-block" style="font-size:9px;">
+                                                    <span class="table-secondary-text d-block mt-1" style="font-size:11px;">
                                                         <i class="bi bi-door-closed me-1"></i>{{ $jurnal->schedule->room->name }}
                                                     </span>
                                                 @endif
@@ -970,11 +1016,11 @@
                                                     {{ $jurnal->materi }}
                                                 </span>
 
-                                                <span class="table-secondary-text d-block mt-0.5">
+                                                <span class="table-secondary-text d-block mt-1">
                                                     {{ $jurnal->summary }}
                                                 </span>
                                                 @if($jurnal->catatan_kejadian && $jurnal->catatan_kejadian !== $jurnal->summary)
-                                                    <small class="text-muted d-block mt-1 fst-italic" style="font-size:10px;">
+                                                    <small class="text-muted d-block mt-1 fst-italic" style="font-size:11px;">
                                                         <i class="bi bi-chat-left-text me-1"></i>Catatan: {{ $jurnal->catatan_kejadian }}
                                                     </small>
                                                 @endif
@@ -983,25 +1029,25 @@
                                             <td>
                                                 @if($jurnal->attachment)
                                                     @if(str_ends_with(strtolower($jurnal->attachment), '.jpg') || str_ends_with(strtolower($jurnal->attachment), '.jpeg') || str_ends_with(strtolower($jurnal->attachment), '.png'))
-                                                        <button type="button" class="evidence-link border-0 bg-transparent p-0 js-proof-preview" data-proof-url="{{ route('journals.attachment', $jurnal) }}" data-proof-title="Bukti KBM - {{ $jurnal->teacher?->name ?? 'Guru' }}">
-                                                            <i class="bi bi-eye"></i> Lihat Foto
+                                                        <button type="button" class="evidence-link js-proof-preview" data-proof-url="{{ route('journals.attachment', $jurnal) }}" data-proof-title="Bukti KBM - {{ $jurnal->teacher?->name ?? 'Guru' }} ({{ $jurnal->schedule?->class?->name ?? '-' }})">
+                                                            <i class="bi bi-camera-fill"></i> Lihat Foto Bukti
                                                         </button>
                                                     @else
-                                                        <a href="{{ route('journals.attachment', $jurnal) }}" class="evidence-link" target="_blank" rel="noopener noreferrer"><i class="bi bi-eye"></i> Lihat Bukti</a>
+                                                        <a href="{{ route('journals.attachment', $jurnal) }}" class="evidence-link" target="_blank" rel="noopener noreferrer"><i class="bi bi-file-earmark-check"></i> Lihat Bukti</a>
                                                     @endif
                                                 @else
-                                                    <span class="table-secondary-text">
-                                                        Tidak ada bukti
+                                                    <span class="badge bg-light text-muted border fw-medium" style="font-size:11px;">
+                                                        Tidak ada lampiran
                                                     </span>
                                                 @endif
 
                                                 @if($user->role->name === 'guru' && $jurnal->teacher_id === $user->id)
                                                     @if(\Carbon\Carbon::parse($jurnal->date)->toDateString() < now()->toDateString())
-                                                        <span class="badge bg-light text-muted border mt-2 py-1 px-2 d-inline-flex align-items-center" style="font-size:9px;" title="Batas waktu pengeditan telah berakhir (Terkunci)">
+                                                        <span class="badge bg-light text-muted border mt-2 py-1 px-2 d-inline-flex align-items-center" style="font-size:10px;" title="Batas waktu pengeditan telah berakhir (Terkunci)">
                                                             <i class="bi bi-lock-fill me-1"></i> Terkunci
                                                         </span>
                                                     @else
-                                                        <a href="{{ route('attendances.create', ['schedule' => $jurnal->schedule_id, 'date' => $jurnal->date]) }}" class="btn-outline-custom mt-2 py-1 px-2 d-inline-flex" style="font-size:9px;min-height:26px;">
+                                                        <a href="{{ route('attendances.create', ['schedule' => $jurnal->schedule_id, 'date' => $jurnal->date]) }}" class="btn-outline-custom mt-2 py-1 px-2 d-inline-flex" style="font-size:11px;min-height:28px;">
                                                             <i class="bi bi-pencil-square"></i> Edit Presensi & Jurnal
                                                         </a>
                                                     @endif
@@ -1016,10 +1062,14 @@
                                             >
                                                 <i class="bi bi-journal-x"></i>
 
-                                                <strong>Belum Ada Jurnal Mengajar</strong>
+                                                <strong>Belum Ada Laporan Jurnal Mengajar</strong>
 
                                                 <span>
-                                                    Data jurnal yang telah dicatat akan ditampilkan di sini.
+                                                    @if($user->role->name === 'waka')
+                                                        Belum ada laporan jurnal mengajar dari Guru yang sesuai dengan kriteria pemantauan di atas.
+                                                    @else
+                                                        Data jurnal mengajar yang telah dicatat akan ditampilkan di sini.
+                                                    @endif
                                                 </span>
                                             </td>
                                         </tr>
@@ -1027,6 +1077,12 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        @if($journals->hasPages())
+                            <div class="p-3 border-top bg-light">
+                                {{ $journals->links() }}
+                            </div>
+                        @endif
                     </div>
                 </section>
             </div>

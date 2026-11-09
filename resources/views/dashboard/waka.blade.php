@@ -432,10 +432,11 @@
                     </div>
                 </div>
                 <div class="row g-3 pt-2">
-                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Siswa</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_students'] }}</div></div></div>
-                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_teachers'] }}</div></div></div>
-                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Wali kelas</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_homeroom'] }}</div></div></div>
-                    <div class="col-6 col-md-3"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">BK</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_bk'] }}</div></div></div>
+                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Siswa</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_students'] }}</div></div></div>
+                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Orang Tua</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_parents'] ?? 0 }}</div></div></div>
+                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_teachers'] }}</div></div></div>
+                    <div class="col-6 col-md-6 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Wali Kelas</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_homeroom'] }}</div></div></div>
+                    <div class="col-12 col-md-6 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru BK</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_bk'] }}</div></div></div>
                 </div>
             </section>
 

@@ -218,11 +218,6 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="mt-3 pt-2 border-top d-flex justify-content-end">
-                        <a href="{{ route('accounts.index') }}" class="btn-outline-primary-custom btn-sm">
-                            <i class="bi bi-arrow-right-circle me-1"></i> Kelola & Atur Password Akun Pengguna
-                        </a>
-                    </div>
                 </div>
             </section>
 

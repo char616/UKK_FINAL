@@ -89,7 +89,7 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
     Route::post('/schedules/toggle-lock', [ScheduleController::class, 'toggleLock'])->middleware('role:waka')->name('schedules.toggle-lock');
 
     // Rute Presensi per Jam Pelajaran
-    Route::get('/attendances', [AttendanceController::class, 'index'])->middleware('role:waka,bk,wali_kelas,guru,siswa,orang_tua')->name('attendances.index');
+    Route::get('/attendances', [AttendanceController::class, 'index'])->middleware('role:waka,bk,guru,siswa,orang_tua')->name('attendances.index');
     Route::get('/attendances/create/{schedule}', [AttendanceController::class, 'create'])->middleware('role:guru')->name('attendances.create');
     Route::post('/attendances/store/{schedule}', [AttendanceController::class, 'store'])->middleware('role:guru')->name('attendances.store');
 
@@ -108,7 +108,7 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
     Route::put('/journals/{journal}', [TeachingJournalController::class, 'update'])->middleware('role:guru')->name('journals.update');
     Route::post('/journals/reminders', [TeachingJournalController::class, 'sendMissingJournalReminders'])->middleware('role:waka')->name('journals.reminders');
     Route::get('/journals/{journal}/attachment', [TeachingJournalController::class, 'downloadAttachment'])
-        ->middleware('role:guru,waka')
+        ->middleware('role:guru,waka,siswa,orang_tua')
         ->name('journals.attachment');
 
     // Rute Rekapitulasi Global (Waka & BK & Wali Kelas)
@@ -122,6 +122,8 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
 
     // Rute Audit Log (Hanya untuk WAKA)
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware('role:waka')->name('audit-logs.index');
+    Route::delete('/audit-logs/{auditLog}', [AuditLogController::class, 'destroy'])->middleware('role:waka')->name('audit-logs.destroy');
+    Route::delete('/audit-logs', [AuditLogController::class, 'destroyAll'])->middleware('role:waka')->name('audit-logs.destroy-all');
 });
 
 // Halaman Utama: tampilkan login bila belum masuk, atau redirect ke dashboard sesuai identitas aktif

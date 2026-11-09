@@ -81,8 +81,16 @@ class TeachingJournalController extends Controller
             ? $this->schedulesMissingJournal($journalDate)
             : new Collection;
 
-        $classes = \App\Models\Classes::orderBy('name')->get();
-        $subjects = \App\Models\Subject::orderBy('name')->get();
+        if ($user->role->name === 'guru') {
+            $teacherActiveSchedules = Schedule::where('teacher_id', $user->id)
+                ->where('round', $activeRound)
+                ->get(['class_id', 'subject_id']);
+            $classes = \App\Models\Classes::whereIn('id', $teacherActiveSchedules->pluck('class_id')->unique())->orderBy('name')->get();
+            $subjects = \App\Models\Subject::whereIn('id', $teacherActiveSchedules->pluck('subject_id')->unique())->orderBy('name')->get();
+        } else {
+            $classes = \App\Models\Classes::orderBy('name')->get();
+            $subjects = \App\Models\Subject::orderBy('name')->get();
+        }
         $teachers = User::whereHas('role', fn ($q) => $q->where('name', 'guru'))->orderBy('name')->get();
 
         return view('journals.index', compact(
@@ -304,11 +312,7 @@ class TeachingJournalController extends Controller
     public function downloadAttachment(TeachingJournal $journal): Response
     {
         $user = Auth::user();
-        abort_unless(
-            $user->role->name === 'waka'
-                || ($user->role->name === 'guru' && $journal->teacher_id === $user->id),
-            404
-        );
+        abort_unless($this->canViewJournalAttachment($user, $journal), 404);
 
         $path = $journal->photo_proof;
         abort_unless(
@@ -331,6 +335,40 @@ class TeachingJournalController extends Controller
         }
 
         return Storage::disk('local')->download($path, $filename);
+    }
+
+    /**
+     * Waka melihat semua foto, Guru hanya foto jurnal miliknya, sedangkan Siswa dan Orang Tua
+     * hanya foto jurnal yang terhubung dengan presensi dirinya sendiri atau putra/putrinya.
+     */
+    private function canViewJournalAttachment(User $user, TeachingJournal $journal): bool
+    {
+        $roleName = $user->role?->name;
+
+        if ($roleName === 'waka') {
+            return true;
+        }
+
+        if ($roleName === 'guru') {
+            return $journal->teacher_id === $user->id;
+        }
+
+        if ($roleName === 'siswa') {
+            $studentIds = [$user->id];
+        } elseif ($roleName === 'orang_tua') {
+            $studentIds = $user->students()->pluck('users.id')->all();
+        } else {
+            return false;
+        }
+
+        if (empty($studentIds)) {
+            return false;
+        }
+
+        return \App\Models\Attendance::query()
+            ->where('teaching_journal_id', $journal->id)
+            ->whereIn('student_id', $studentIds)
+            ->exists();
     }
 
     /**
@@ -414,7 +452,7 @@ class TeachingJournalController extends Controller
         ][Carbon::parse($date)->dayOfWeekIso];
 
         return Schedule::query()
-            ->with('teacher:id,name')
+            ->with(['teacher:id,name', 'class', 'subject', 'room', 'jamPelajaran'])
             ->where('day', $day)
             ->where('round', Cycle::current()->active_round)
             ->whereHas('teacher', fn ($query) => $query->where('is_active', true))

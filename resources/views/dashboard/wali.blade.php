@@ -83,59 +83,17 @@
                 </div>
 
                 <div class="row g-3 my-2">
-                    <div class="col-6 col-md-3">
+                    <div class="col-12 col-md-6 col-lg-4">
                         <div class="p-3 rounded-3 border bg-light h-100">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-muted fw-bold" style="font-size: 11px;">TOTAL HADIR</span>
-                                <span class="badge bg-success-subtle text-success rounded-circle p-2"><i class="bi bi-check-lg fs-6"></i></span>
+                                <span class="text-muted fw-bold" style="font-size: 11px;">TOTAL ANAK</span>
+                                <span class="badge bg-primary-subtle text-primary rounded-circle p-2"><i class="bi bi-people-fill fs-6"></i></span>
                             </div>
                             <div class="d-flex align-items-baseline gap-1">
-                                <span class="fs-2 fw-bold text-success">{{ $classStats['hadir'] ?? 0 }}</span>
-                                <span class="text-muted small">kali</span>
+                                <span class="fs-2 fw-bold text-primary">{{ $classStats['total_students'] ?? 0 }}</span>
+                                <span class="text-muted small">siswa</span>
                             </div>
-                            <div class="small text-muted mt-1" style="font-size: 10px;">Kehadiran akumulatif kelas</div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 rounded-3 border bg-light h-100">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-muted fw-bold" style="font-size: 11px;">TOTAL IZIN</span>
-                                <span class="badge bg-info-subtle text-primary rounded-circle p-2"><i class="bi bi-envelope fs-6"></i></span>
-                            </div>
-                            <div class="d-flex align-items-baseline gap-1">
-                                <span class="fs-2 fw-bold text-primary">{{ $classStats['izin'] ?? 0 }}</span>
-                                <span class="text-muted small">kali</span>
-                            </div>
-                            <div class="small text-muted mt-1" style="font-size: 10px;">Izin resmi terdata</div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 rounded-3 border bg-light h-100">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-muted fw-bold" style="font-size: 11px;">TOTAL SAKIT</span>
-                                <span class="badge bg-warning-subtle text-warning rounded-circle p-2"><i class="bi bi-bandaid fs-6"></i></span>
-                            </div>
-                            <div class="d-flex align-items-baseline gap-1">
-                                <span class="fs-2 fw-bold text-warning">{{ $classStats['sakit'] ?? 0 }}</span>
-                                <span class="text-muted small">kali</span>
-                            </div>
-                            <div class="small text-muted mt-1" style="font-size: 10px;">Keterangan sakit</div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 rounded-3 border bg-light h-100">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-muted fw-bold" style="font-size: 11px;">TOTAL ALPA</span>
-                                <span class="badge bg-danger-subtle text-danger rounded-circle p-2"><i class="bi bi-x-lg fs-6"></i></span>
-                            </div>
-                            <div class="d-flex align-items-baseline gap-1">
-                                <span class="fs-2 fw-bold text-danger">{{ $classStats['alpa'] ?? 0 }}</span>
-                                <span class="text-muted small">kali</span>
-                            </div>
-                            <div class="small text-muted mt-1" style="font-size: 10px;">Tanpa keterangan</div>
+                            <div class="small text-muted mt-1" style="font-size: 10px;">Jumlah siswa di kelas binaan</div>
                         </div>
                     </div>
                 </div>
@@ -323,12 +281,6 @@
                     <a class="scp-dashboard-link" href="{{ route('schedules.index') }}">
                         <span class="scp-dashboard-link-icon"><i class="bi bi-calendar-week"></i></span>
                         <span class="scp-dashboard-link-label">Jadwal Pelajaran</span>
-                        <i class="bi bi-arrow-up-right scp-dashboard-link-arrow"></i>
-                    </a>
-
-                    <a class="scp-dashboard-link" href="{{ route('attendances.index') }}">
-                        <span class="scp-dashboard-link-icon"><i class="bi bi-calendar-check"></i></span>
-                        <span class="scp-dashboard-link-label">Presensi Kelas</span>
                         <i class="bi bi-arrow-up-right scp-dashboard-link-arrow"></i>
                     </a>
 
