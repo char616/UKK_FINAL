@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+        Paginator::defaultView('vendor.pagination.bootstrap-5');
+        Paginator::defaultSimpleView('vendor.pagination.simple-bootstrap-5');
+
         $tempDir = storage_path('framework/temp');
         if (! is_dir($tempDir)) {
             @mkdir($tempDir, 0775, true);

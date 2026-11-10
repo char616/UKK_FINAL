@@ -420,6 +420,71 @@
     }
 
     /* RULE LIST */
+    /* ============================================================
+       SCP SYSTEM - GLOBAL PAGINATION STYLING (FIX GIANT ARROW & BROKEN LAYOUT)
+    ============================================================ */
+    .pagination {
+        display: flex !important;
+        padding-left: 0 !important;
+        list-style: none !important;
+        gap: 4px !important;
+        margin: 0 !important;
+        align-items: center !important;
+    }
+
+    .page-item .page-link {
+        position: relative !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 34px !important;
+        height: 34px !important;
+        padding: 5px 12px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        text-decoration: none !important;
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        transition: all .15s ease-in-out !important;
+    }
+
+    .page-item.active .page-link {
+        z-index: 3 !important;
+        color: #ffffff !important;
+        background-color: var(--scp-primary, #174ea6) !important;
+        border-color: var(--scp-primary, #174ea6) !important;
+        box-shadow: 0 2px 6px rgba(23, 78, 166, 0.25) !important;
+    }
+
+    .page-item.disabled .page-link {
+        color: #94a3b8 !important;
+        pointer-events: none !important;
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        opacity: 0.7 !important;
+    }
+
+    .page-item:not(.active):not(.disabled) .page-link:hover {
+        color: var(--scp-primary, #174ea6) !important;
+        background-color: #eff6ff !important;
+        border-color: #bfdbfe !important;
+    }
+
+    /* Guard: Strict containment for any SVG in navigation/pagination */
+    .pagination svg,
+    nav svg,
+    [aria-label="Pagination Navigation"] svg,
+    [aria-label="Navigasi Halaman"] svg {
+        max-width: 14px !important;
+        max-height: 14px !important;
+        width: 14px !important;
+        height: 14px !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
     .rule-list {
         display: flex !important;
         flex-direction: column !important;

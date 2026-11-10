@@ -612,6 +612,12 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if($attendances->hasPages())
+                    <div class="mt-3">
+                        {{ $attendances->links('vendor.pagination.bootstrap-5') }}
+                    </div>
+                @endif
             </div>
 
         </div>

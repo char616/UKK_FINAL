@@ -519,8 +519,8 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $attendances->links() }}
+                <div class="mt-4">
+                    {{ $attendances->links('vendor.pagination.bootstrap-5') }}
                 </div>
             </div>
 

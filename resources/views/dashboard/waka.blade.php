@@ -372,6 +372,198 @@
             .rule-description {
                 font-size: 10px;
             }
+
+            .total-users-pill,
+            .btn-manage-users-pill {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .civitas-card {
+                padding: 12px 14px;
+            }
+
+            .civitas-value {
+                font-size: 20px;
+            }
+
+            .civitas-badge {
+                width: 34px;
+                height: 34px;
+                font-size: 15px;
+            }
+
+            .civitas-legend-row {
+                gap: 8px;
+            }
+        }
+
+        /* Bespoke Civitas Akademika Infographics */
+        .civitas-stat-card {
+            border: 1px solid var(--waka-border);
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+        }
+
+        .total-users-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            font-size: 11.5px;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .btn-manage-users-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: #eff6ff;
+            color: #174ea6;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .btn-manage-users-pill:hover {
+            background: #dbeafe;
+            color: #123d80;
+            border-color: #93c5fd;
+        }
+
+        .civitas-card {
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .civitas-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+            border-color: #cbd5e1;
+        }
+
+        .civitas-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .civitas-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 17px;
+        }
+
+        .civitas-badge-siswa { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
+        .civitas-badge-ortu  { background: #faf5ff; color: #7e22ce; border: 1px solid #f3e8ff; }
+        .civitas-badge-guru  { background: #ecfdf5; color: #047857; border: 1px solid #d1fae5; }
+        .civitas-badge-wali  { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+        .civitas-badge-bk    { background: #fff1f2; color: #be123c; border: 1px solid #ffe4e6; }
+
+        .civitas-role-tag {
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .civitas-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 2px;
+        }
+
+        .civitas-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.6px;
+            line-height: 1.15;
+            margin-bottom: 4px;
+        }
+
+        .civitas-caption {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .civitas-pct {
+            font-weight: 700;
+        }
+        .text-purple { color: #7e22ce !important; }
+        .text-amber { color: #b45309 !important; }
+        .text-rose { color: #be123c !important; }
+
+        .civitas-bar-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .civitas-stacked-progress {
+            display: flex;
+            height: 7px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #f1f5f9;
+            gap: 2px;
+        }
+        .progress-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .bg-siswa { background-color: #2563eb !important; }
+        .bg-ortu  { background-color: #8b5cf6 !important; }
+        .bg-guru  { background-color: #10b981 !important; }
+        .bg-wali  { background-color: #f59e0b !important; }
+        .bg-bk    { background-color: #f43f5e !important; }
+
+        .civitas-legend-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .civitas-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
         }
     </style>
 </head>
@@ -423,20 +615,168 @@
                 </div>
             </section>
 
-            <section class="content-card mb-4">
-                <div class="section-header">
-                    <div class="section-icon"><i class="bi bi-bar-chart-fill"></i></div>
-                    <div>
-                        <h2 class="section-title">Infografis Pengguna</h2>
-                        <p class="section-description">Jumlah pengguna terdaftar.</p>
+            @php
+                $totSiswa = (int) ($stats['total_students'] ?? 0);
+                $totOrtu = (int) ($stats['total_parents'] ?? 0);
+                $totGuru = (int) ($stats['total_teachers'] ?? 0);
+                $totWali = (int) ($stats['total_homeroom'] ?? 0);
+                $totBk = (int) ($stats['total_bk'] ?? 0);
+                $totalCivitas = $totSiswa + $totOrtu + $totGuru + $totWali + $totBk;
+
+                $pctSiswa = $totalCivitas > 0 ? round(($totSiswa / $totalCivitas) * 100, 1) : 0;
+                $pctOrtu = $totalCivitas > 0 ? round(($totOrtu / $totalCivitas) * 100, 1) : 0;
+                $pctGuru = $totalCivitas > 0 ? round(($totGuru / $totalCivitas) * 100, 1) : 0;
+                $pctWali = $totalCivitas > 0 ? round(($totWali / $totalCivitas) * 100, 1) : 0;
+                $pctBk = $totalCivitas > 0 ? round(($totBk / $totalCivitas) * 100, 1) : 0;
+            @endphp
+
+            <section class="content-card mb-4 civitas-stat-card">
+                <div class="section-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="section-icon">
+                            <i class="bi bi-pie-chart-fill"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <h2 class="section-title mb-0">Distribusi Civitas Akademika</h2>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill fw-bold" style="font-size: 11px;">
+                                    <i class="bi bi-shield-check me-1"></i>Sistem Terintegrasi
+                                </span>
+                            </div>
+                            <p class="section-description">Monitoring sebaran akun aktif civitas sekolah dan tenaga pendidik terdaftar.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="total-users-pill">
+                            <i class="bi bi-person-check-fill text-primary"></i>
+                            <span>Total Civitas: <strong>{{ number_format($totalCivitas) }}</strong> Akun</span>
+                        </div>
+                        <a href="{{ route('accounts.index') }}" class="btn-manage-users-pill">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Kelola Akun</span>
+                        </a>
                     </div>
                 </div>
-                <div class="row g-3 pt-2">
-                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Siswa</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_students'] }}</div></div></div>
-                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Orang Tua</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_parents'] ?? 0 }}</div></div></div>
-                    <div class="col-6 col-md-4 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_teachers'] }}</div></div></div>
-                    <div class="col-6 col-md-6 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Wali Kelas</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_homeroom'] }}</div></div></div>
-                    <div class="col-12 col-md-6 col-xl"><div class="p-3 rounded-3 bg-light h-100"><div class="text-muted small">Guru BK</div><div class="fs-4 fw-bold text-primary">{{ $stats['total_bk'] }}</div></div></div>
+
+                {{-- STAT CARDS GRID --}}
+                <div class="row g-3 pt-3">
+                    {{-- 1. SISWA --}}
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="civitas-card civitas-card-siswa h-100">
+                            <div class="civitas-card-header">
+                                <div class="civitas-badge civitas-badge-siswa">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                </div>
+                                <span class="civitas-role-tag">Siswa</span>
+                            </div>
+                            <div class="civitas-card-body">
+                                <span class="civitas-label">Peserta Didik</span>
+                                <div class="civitas-value">{{ number_format($totSiswa) }}</div>
+                                <div class="civitas-caption">
+                                    <span class="civitas-pct text-primary">{{ $pctSiswa }}%</span> dari total civitas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 2. ORANG TUA --}}
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="civitas-card civitas-card-ortu h-100">
+                            <div class="civitas-card-header">
+                                <div class="civitas-badge civitas-badge-ortu">
+                                    <i class="bi bi-person-heart"></i>
+                                </div>
+                                <span class="civitas-role-tag">Orang Tua</span>
+                            </div>
+                            <div class="civitas-card-body">
+                                <span class="civitas-label">Wali Murid</span>
+                                <div class="civitas-value">{{ number_format($totOrtu) }}</div>
+                                <div class="civitas-caption">
+                                    <span class="civitas-pct text-purple">{{ $pctOrtu }}%</span> akses pendamping
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 3. GURU --}}
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="civitas-card civitas-card-guru h-100">
+                            <div class="civitas-card-header">
+                                <div class="civitas-badge civitas-badge-guru">
+                                    <i class="bi bi-person-video3"></i>
+                                </div>
+                                <span class="civitas-role-tag">Guru</span>
+                            </div>
+                            <div class="civitas-card-body">
+                                <span class="civitas-label">Tenaga Pengajar</span>
+                                <div class="civitas-value">{{ number_format($totGuru) }}</div>
+                                <div class="civitas-caption">
+                                    <span class="civitas-pct text-success">{{ $pctGuru }}%</span> pengampu KBM
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 4. WALI KELAS --}}
+                    <div class="col-6 col-md-6 col-xl">
+                        <div class="civitas-card civitas-card-wali h-100">
+                            <div class="civitas-card-header">
+                                <div class="civitas-badge civitas-badge-wali">
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
+                                <span class="civitas-role-tag">Wali Kelas</span>
+                            </div>
+                            <div class="civitas-card-body">
+                                <span class="civitas-label">Pembina Rombel</span>
+                                <div class="civitas-value">{{ number_format($totWali) }}</div>
+                                <div class="civitas-caption">
+                                    <span class="civitas-pct text-amber">{{ $pctWali }}%</span> pembina kelas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 5. GURU BK --}}
+                    <div class="col-12 col-md-6 col-xl">
+                        <div class="civitas-card civitas-card-bk h-100">
+                            <div class="civitas-card-header">
+                                <div class="civitas-badge civitas-badge-bk">
+                                    <i class="bi bi-heart-pulse-fill"></i>
+                                </div>
+                                <span class="civitas-role-tag">Guru BK</span>
+                            </div>
+                            <div class="civitas-card-body">
+                                <span class="civitas-label">Bimbingan Konseling</span>
+                                <div class="civitas-value">{{ number_format($totBk) }}</div>
+                                <div class="civitas-caption">
+                                    <span class="civitas-pct text-rose">{{ $pctBk }}%</span> konselor siswa
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- SEGMENTED RATIO PROGRESS BAR --}}
+                <div class="civitas-distribution-bar-wrapper mt-3 pt-3 border-top">
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <span class="civitas-bar-title">Proporsi Sebaran Akun Civitas</span>
+                        <span class="text-muted small" style="font-size: 11px;">100% Akumulasi Terdaftar</span>
+                    </div>
+                    <div class="civitas-stacked-progress">
+                        <div class="progress-segment bg-siswa" style="width: {{ $pctSiswa }}%;" title="Siswa: {{ $pctSiswa }}%"></div>
+                        <div class="progress-segment bg-ortu" style="width: {{ $pctOrtu }}%;" title="Orang Tua: {{ $pctOrtu }}%"></div>
+                        <div class="progress-segment bg-guru" style="width: {{ $pctGuru }}%;" title="Guru: {{ $pctGuru }}%"></div>
+                        <div class="progress-segment bg-wali" style="width: {{ $pctWali }}%;" title="Wali Kelas: {{ $pctWali }}%"></div>
+                        <div class="progress-segment bg-bk" style="width: {{ $pctBk }}%;" title="Guru BK: {{ $pctBk }}%"></div>
+                    </div>
+                    <div class="civitas-legend-row">
+                        <span class="civitas-legend-item"><span class="legend-dot bg-siswa"></span>Siswa ({{ $pctSiswa }}%)</span>
+                        <span class="civitas-legend-item"><span class="legend-dot bg-ortu"></span>Orang Tua ({{ $pctOrtu }}%)</span>
+                        <span class="civitas-legend-item"><span class="legend-dot bg-guru"></span>Guru ({{ $pctGuru }}%)</span>
+                        <span class="civitas-legend-item"><span class="legend-dot bg-wali"></span>Wali Kelas ({{ $pctWali }}%)</span>
+                        <span class="civitas-legend-item"><span class="legend-dot bg-bk"></span>Guru BK ({{ $pctBk }}%)</span>
+                    </div>
                 </div>
             </section>
 

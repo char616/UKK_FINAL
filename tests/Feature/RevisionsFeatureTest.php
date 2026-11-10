@@ -217,7 +217,7 @@ class RevisionsFeatureTest extends TestCase
         $parentCount = User::whereHas('role', fn ($q) => $q->where('name', 'orang_tua'))->count();
         $this->assertGreaterThan(0, $parentCount, 'Akun orang_tua harus tersedia dari seeder');
 
-        $accountsResponse = $this->actingAs($waka)->get(route('accounts.index', ['role' => 'orang_tua']));
+        $accountsResponse = $this->actingAs($waka)->get(route('accounts.index'));
         $accountsResponse->assertOk();
         $accountsResponse->assertSee('Buat Akun Pengguna Baru');
         $accountsResponse->assertDontSee('Semua akun aktif otomatis.');

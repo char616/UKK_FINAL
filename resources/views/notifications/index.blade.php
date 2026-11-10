@@ -321,8 +321,8 @@
                     @endforelse
                 </div>
 
-                <div class="d-flex justify-content-center">
-                    {{ $notifications->links() }}
+                <div class="mt-4">
+                    {{ $notifications->links('vendor.pagination.bootstrap-5') }}
                 </div>
             </div>
 

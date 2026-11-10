@@ -489,19 +489,18 @@
 
         /* AVATAR INISIAL SISWA */
         .student-avatar {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 34px;
             height: 34px;
             flex-shrink: 0;
             border-radius: 50%;
-            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
             border: 1px solid #BFDBFE;
-            color: #1D4ED8;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 800;
             line-height: 1;
+            letter-spacing: 0.3px;
             text-transform: uppercase;
         }
 
@@ -677,6 +676,45 @@
             .sticky-action-bar {
                 flex-direction: column;
                 align-items: stretch;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
+            .attendance-counters {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 4px !important;
+            }
+            .counter-badge {
+                padding: 4px 8px !important;
+                font-size: 10px !important;
+            }
+            .btn-mark-all {
+                width: 100% !important;
+                justify-content: center !important;
+                margin-top: 4px !important;
+            }
+            .attendance-radio-group .btn {
+                padding: 5px 8px !important;
+                font-size: 10.5px !important;
+            }
+            .sticky-action-bar {
+                padding: 10px 14px !important;
+                bottom: 8px !important;
+            }
+            .sticky-action-bar .d-flex {
+                flex-direction: column !important;
+                width: 100% !important;
+            }
+            .sticky-action-bar .d-flex .btn,
+            .sticky-action-bar .d-flex a {
+                width: 100% !important;
+                justify-content: center !important;
             }
         }
     </style>
@@ -986,9 +1024,28 @@
                                             </span>
                                         </td>
                                         <td>
+                                            @php
+                                                $studentWords = preg_split('/\s+/', trim($student->name));
+                                                $initials = '';
+                                                if (count($studentWords) >= 2) {
+                                                    $initials = mb_strtoupper(mb_substr($studentWords[0], 0, 1) . mb_substr(end($studentWords), 0, 1));
+                                                } else {
+                                                    $initials = mb_strtoupper(mb_substr($studentWords[0] ?? 'S', 0, 2));
+                                                }
+                                                $avatarColorPalettes = [
+                                                    ['bg' => '#eff6ff', 'text' => '#1d4ed8', 'border' => '#bfdbfe'],
+                                                    ['bg' => '#f5f3ff', 'text' => '#6d28d9', 'border' => '#ddd6fe'],
+                                                    ['bg' => '#ecfdf5', 'text' => '#047857', 'border' => '#a7f3d0'],
+                                                    ['bg' => '#fffbeb', 'text' => '#b45309', 'border' => '#fde68a'],
+                                                    ['bg' => '#fff1f2', 'text' => '#be123c', 'border' => '#fecdd3'],
+                                                    ['bg' => '#f0fdfa', 'text' => '#0f766e', 'border' => '#99f6e4'],
+                                                ];
+                                                $paletteIdx = abs(crc32($student->name ?? (string)$student->id)) % count($avatarColorPalettes);
+                                                $theme = $avatarColorPalettes[$paletteIdx];
+                                            @endphp
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="student-avatar">
-                                                    {{ mb_strtoupper(mb_substr(trim($student->name), 0, 1)) }}
+                                                <div class="student-avatar" style="background-color: {{ $theme['bg'] }}; color: {{ $theme['text'] }}; border-color: {{ $theme['border'] }};">
+                                                    {{ $initials }}
                                                 </div>
                                                 <span class="student-name-text">{{ $student->name }}</span>
                                             </div>

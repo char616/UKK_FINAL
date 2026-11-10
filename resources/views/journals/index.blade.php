@@ -1080,7 +1080,7 @@
 
                         @if($journals->hasPages())
                             <div class="p-3 border-top bg-light">
-                                {{ $journals->links() }}
+                                {{ $journals->links('vendor.pagination.bootstrap-5') }}
                             </div>
                         @endif
                     </div>
