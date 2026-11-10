@@ -22,7 +22,7 @@ class ReportController extends Controller
             ->orderBy('status')
             ->get();
         $attendances = $attendanceQuery
-            ->with(['student', 'schedule.class', 'schedule.subject', 'schedule.teacher'])
+            ->with(['student', 'schedule.class', 'schedule.subject', 'schedule.teacher', 'teachingJournal'])
             ->orderByDesc('date')
             ->orderBy('schedule_id')
             ->orderBy('student_id')

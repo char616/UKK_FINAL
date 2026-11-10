@@ -108,7 +108,7 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
     Route::put('/journals/{journal}', [TeachingJournalController::class, 'update'])->middleware('role:guru')->name('journals.update');
     Route::post('/journals/reminders', [TeachingJournalController::class, 'sendMissingJournalReminders'])->middleware('role:waka')->name('journals.reminders');
     Route::get('/journals/{journal}/attachment', [TeachingJournalController::class, 'downloadAttachment'])
-        ->middleware('role:guru,waka,siswa,orang_tua')
+        ->middleware('role:guru,waka,bk,wali_kelas,siswa,orang_tua')
         ->name('journals.attachment');
 
     // Rute Rekapitulasi Global (Waka & BK & Wali Kelas)

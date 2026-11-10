@@ -251,10 +251,11 @@ class AttendanceApiController extends Controller
                 $previousStatus = $existingAttendances->get($studentId)?->status;
 
                 if ($previousStatus !== $status && $status !== 'Hadir') {
+                    $formattedDate = \Carbon\Carbon::parse($date)->format('d-m-Y');
                     Notification::send(
                         (int) $studentId,
                         'Informasi Presensi',
-                        'Presensi Anda pada ' . $date . ' tercatat dengan status ' . $status . '.'
+                        'Presensi Anda pada ' . $formattedDate . ' tercatat dengan status ' . $status . '.'
                     );
 
                     $studentModel = $studentsWithParents->get($studentId);

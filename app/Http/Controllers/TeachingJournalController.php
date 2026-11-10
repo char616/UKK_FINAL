@@ -180,13 +180,18 @@ class TeachingJournalController extends Controller
         $reminderTitle = 'Pengingat Jurnal Mengajar';
         $sentCount = 0;
 
-        DB::transaction(function () use ($missingSchedulesByTeacher, $date, $reminderTitle, &$sentCount): void {
+        $formattedDate = \Carbon\Carbon::parse($date)->format('d-m-Y');
+
+        DB::transaction(function () use ($missingSchedulesByTeacher, $date, $formattedDate, $reminderTitle, &$sentCount): void {
             foreach ($missingSchedulesByTeacher as $teacherId => $schedules) {
-                $message = 'Mohon lengkapi jurnal mengajar untuk tanggal '.$date.'.';
+                $message = 'Mohon lengkapi jurnal mengajar untuk tanggal '.$formattedDate.'.';
                 $alreadySent = Notification::query()
                     ->where('user_id', $teacherId)
                     ->where('title', $reminderTitle)
-                    ->where('message', $message)
+                    ->where(function ($q) use ($message, $date) {
+                        $q->where('message', $message)
+                            ->orWhere('message', 'Mohon lengkapi jurnal mengajar untuk tanggal '.$date.'.');
+                    })
                     ->exists();
 
                 if ($alreadySent) {
@@ -201,7 +206,7 @@ class TeachingJournalController extends Controller
                 AuditLog::record(
                     Auth::id(),
                     'SEND_MISSING_JOURNAL_REMINDERS',
-                    'WAKA mengirim pengingat jurnal kepada '.$sentCount.' guru untuk tanggal '.$date.'.'
+                    'WAKA mengirim pengingat jurnal kepada '.$sentCount.' guru untuk tanggal '.$formattedDate.'.'
                 );
             }
         });
@@ -323,10 +328,10 @@ class TeachingJournalController extends Controller
         );
 
         $filename = str_replace(["\r", "\n", '"'], '', basename($path));
+        $mime = Storage::disk('local')->mimeType($path) ?: 'application/octet-stream';
+        $isImage = str_starts_with($mime, 'image/');
 
-        if (request()->query('preview') === '1') {
-            $mime = Storage::disk('local')->mimeType($path) ?: 'application/octet-stream';
-
+        if (request()->query('preview') === '1' || $isImage) {
             return Storage::disk('local')->response($path, $filename, [
                 'Content-Type' => $mime,
                 'Content-Disposition' => 'inline; filename="'.$filename.'"',
@@ -338,14 +343,15 @@ class TeachingJournalController extends Controller
     }
 
     /**
-     * Waka melihat semua foto, Guru hanya foto jurnal miliknya, sedangkan Siswa dan Orang Tua
-     * hanya foto jurnal yang terhubung dengan presensi dirinya sendiri atau putra/putrinya.
+     * Waka, BK, dan Wali Kelas melihat foto bukti KBM untuk monitoring kehadiran & kedisiplinan,
+     * Guru melihat foto jurnal miliknya, sedangkan Siswa dan Orang Tua hanya foto jurnal yang
+     * terhubung dengan presensi dirinya sendiri atau putra/putrinya.
      */
     private function canViewJournalAttachment(User $user, TeachingJournal $journal): bool
     {
         $roleName = $user->role?->name;
 
-        if ($roleName === 'waka') {
+        if (in_array($roleName, ['waka', 'bk', 'wali_kelas'], true)) {
             return true;
         }
 

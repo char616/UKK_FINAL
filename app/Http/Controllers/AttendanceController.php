@@ -245,7 +245,8 @@ class AttendanceController extends Controller
                 continue;
             }
 
-            Notification::send((int) $studentId, 'Informasi Presensi', 'Presensi Anda pada '.$date.' tercatat dengan status '.$status.'.');
+            $formattedDate = \Carbon\Carbon::parse($date)->format('d-m-Y');
+            Notification::send((int) $studentId, 'Informasi Presensi', 'Presensi Anda pada '.$formattedDate.' tercatat dengan status '.$status.'.');
             $studentModel = $studentsWithParents->get($studentId);
             if (! $studentModel) continue;
 

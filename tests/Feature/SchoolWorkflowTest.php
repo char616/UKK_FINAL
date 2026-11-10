@@ -404,7 +404,8 @@ class SchoolWorkflowTest extends TestCase
         $teacher = $this->createUser('guru');
         $schoolData = $this->createScheduleData($teacher);
         $date = now()->startOfWeek()->toDateString();
-        $message = 'Mohon lengkapi jurnal mengajar untuk tanggal '.$date.'.';
+        $formattedDate = \Carbon\Carbon::parse($date)->format('d-m-Y');
+        $message = 'Mohon lengkapi jurnal mengajar untuk tanggal '.$formattedDate.'.';
 
         $response = $this->actingAs($waka)->post(route('journals.reminders'), [
             'date' => $date,

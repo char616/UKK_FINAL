@@ -84,15 +84,19 @@ class TeachingJournalApiController extends Controller
         $date = $validated['date'];
         $missingSchedulesByTeacher = $this->schedulesMissingJournal($date)->groupBy('teacher_id');
         $reminderTitle = 'Pengingat Jurnal Mengajar';
+        $formattedDate = \Carbon\Carbon::parse($date)->format('d-m-Y');
         $sentCount = 0;
 
-        DB::transaction(function () use ($request, $missingSchedulesByTeacher, $date, $reminderTitle, &$sentCount): void {
+        DB::transaction(function () use ($request, $missingSchedulesByTeacher, $date, $formattedDate, $reminderTitle, &$sentCount): void {
             foreach ($missingSchedulesByTeacher as $teacherId => $schedules) {
-                $message = 'Mohon lengkapi jurnal mengajar untuk tanggal ' . $date . '.';
+                $message = 'Mohon lengkapi jurnal mengajar untuk tanggal ' . $formattedDate . '.';
                 $alreadySent = Notification::query()
                     ->where('user_id', $teacherId)
                     ->where('title', $reminderTitle)
-                    ->where('message', $message)
+                    ->where(function ($q) use ($message, $date) {
+                        $q->where('message', $message)
+                            ->orWhere('message', 'Mohon lengkapi jurnal mengajar untuk tanggal ' . $date . '.');
+                    })
                     ->exists();
 
                 if ($alreadySent) {
@@ -107,7 +111,7 @@ class TeachingJournalApiController extends Controller
                 AuditLog::record(
                     $request->user()->id,
                     'SEND_MISSING_JOURNAL_REMINDERS',
-                    'WAKA mengirim pengingat jurnal kepada ' . $sentCount . ' guru untuk tanggal ' . $date . '.'
+                    'WAKA mengirim pengingat jurnal kepada ' . $sentCount . ' guru untuk tanggal ' . $formattedDate . '.'
                 );
             }
         });
@@ -218,8 +222,9 @@ class TeachingJournalApiController extends Controller
     public function downloadAttachment(Request $request, TeachingJournal $journal)
     {
         $user = $request->user();
-        $authorized = $user->role?->name === 'waka'
-            || ($user->role?->name === 'guru' && (int) $journal->teacher_id === (int) $user->id);
+        $roleName = $user->role?->name;
+        $authorized = in_array($roleName, ['waka', 'bk', 'wali_kelas'], true)
+            || ($roleName === 'guru' && (int) $journal->teacher_id === (int) $user->id);
 
         if (! $authorized) {
             return $this->errorResponse('Lampiran jurnal tidak ditemukan atau akses ditolak.', 404);

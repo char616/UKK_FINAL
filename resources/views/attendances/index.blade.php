@@ -554,7 +554,7 @@
                                             </div>
                                             <div class="d-flex align-items-center gap-2 mt-1">
                                                 @if(filled($attendance->teachingJournal->photo_proof))
-                                                    <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2 js-attendance-proof" style="font-size: 10px;" data-proof-url="{{ route('journals.attachment', $attendance->teachingJournal) }}" data-proof-title="Bukti KBM - {{ $attendance->schedule->subject->name ?? 'Pembelajaran' }} ({{ $attendance->schedule->class->name ?? '-' }})">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2 js-attendance-proof" style="font-size: 10px;" data-proof-url="{{ route('journals.attachment', ['journal' => $attendance->teachingJournal, 'preview' => 1]) }}" data-proof-title="Bukti KBM - {{ $attendance->schedule->subject->name ?? 'Pembelajaran' }} ({{ $attendance->schedule->class->name ?? '-' }})">
                                                         <i class="bi bi-image me-1"></i>Foto KBM
                                                     </button>
                                                 @endif

@@ -311,7 +311,7 @@
                                     <i class="bi bi-clock me-1"></i>{{ $notif->created_at->diffForHumans() }}
                                 </span>
                             </div>
-                            <p class="mb-0 text-muted small mt-1 ps-4" style="line-height: 1.6;">{{ $notif->message }}</p>
+                            <p class="mb-0 text-muted small mt-1 ps-4" style="line-height: 1.6;">{{ $notif->formatted_message ?? $notif->message }}</p>
                         </div>
                     @empty
                         <div class="text-center text-muted py-5">

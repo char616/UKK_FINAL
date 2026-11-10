@@ -478,6 +478,7 @@
                                 <th>Kelas</th>
                                 <th>Mata Pelajaran</th>
                                 <th>Guru Pengampu</th>
+                                <th>Bukti KBM</th>
                                 <th class="text-center">Status</th>
                                 <th>Catatan</th>
                             </tr>
@@ -490,6 +491,15 @@
                                     <td><span class="badge bg-light text-dark border">{{ $attendance->schedule?->class?->name ?? '-' }}</span></td>
                                     <td><span class="text-dark">{{ $attendance->schedule?->subject?->name ?? '-' }}</span></td>
                                     <td><span class="text-muted">{{ $attendance->schedule?->teacher?->name ?? '-' }}</span></td>
+                                    <td>
+                                        @if($attendance->teachingJournal && filled($attendance->teachingJournal->photo_proof))
+                                            <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2 js-attendance-proof" style="font-size: 10px;" data-proof-url="{{ route('journals.attachment', ['journal' => $attendance->teachingJournal, 'preview' => 1]) }}" data-proof-title="Bukti KBM - {{ $attendance->schedule?->subject?->name ?? 'Pembelajaran' }} ({{ $attendance->schedule?->class?->name ?? '-' }})">
+                                                <i class="bi bi-image me-1"></i>Foto KBM
+                                            </button>
+                                        @else
+                                            <span class="text-muted small">-</span>
+                                        @endif
+                                    </td>
                                     <td class="text-center">
                                         @php
                                             $st = strtolower($attendance->status);
@@ -527,6 +537,29 @@
         </div>
     </main>
 
+    <!-- MODAL PREVIEW FOTO BUKTI KBM -->
+    <div class="modal fade" id="attendanceProofModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-6 fw-bold" id="attendanceProofTitle">Foto Bukti Pembelajaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body text-center bg-light p-3">
+                    <img id="attendanceProofImage" src="" alt="Foto bukti pembelajaran" class="img-fluid rounded border shadow-sm" style="max-height:75vh;object-fit:contain;">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.js-attendance-proof').forEach(button => button.addEventListener('click', () => {
+            document.getElementById('attendanceProofTitle').textContent = button.dataset.proofTitle || 'Foto Bukti Pembelajaran';
+            document.getElementById('attendanceProofImage').src = button.dataset.proofUrl;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('attendanceProofModal')).show();
+        }));
+        document.getElementById('attendanceProofModal')?.addEventListener('hidden.bs.modal', () => document.getElementById('attendanceProofImage').src = '');
+    </script>
 </body>
 </html>
