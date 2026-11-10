@@ -473,10 +473,23 @@
     }
 
     /* Guard: Strict containment for any SVG in navigation/pagination */
+    .w-5,
+    svg.w-5 {
+        width: 14px !important;
+        max-width: 14px !important;
+    }
+    .h-5,
+    svg.h-5 {
+        height: 14px !important;
+        max-height: 14px !important;
+    }
     .pagination svg,
     nav svg,
     [aria-label="Pagination Navigation"] svg,
-    [aria-label="Navigasi Halaman"] svg {
+    [aria-label*="Pagination"] svg,
+    [aria-label*="pagination"] svg,
+    [aria-label="Navigasi Halaman"] svg,
+    [aria-label*="Navigasi"] svg {
         max-width: 14px !important;
         max-height: 14px !important;
         width: 14px !important;

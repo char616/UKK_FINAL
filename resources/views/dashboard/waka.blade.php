@@ -625,6 +625,7 @@
 
                 $pctSiswa = $totalCivitas > 0 ? round(($totSiswa / $totalCivitas) * 100, 1) : 0;
                 $pctOrtu = $totalCivitas > 0 ? round(($totOrtu / $totalCivitas) * 100, 1) : 0;
+                $rasioPendamping = $totSiswa > 0 ? min(100, round(($totOrtu / $totSiswa) * 100)) : 0;
                 $pctGuru = $totalCivitas > 0 ? round(($totGuru / $totalCivitas) * 100, 1) : 0;
                 $pctWali = $totalCivitas > 0 ? round(($totWali / $totalCivitas) * 100, 1) : 0;
                 $pctBk = $totalCivitas > 0 ? round(($totBk / $totalCivitas) * 100, 1) : 0;
@@ -693,7 +694,7 @@
                                 <span class="civitas-label">Wali Murid</span>
                                 <div class="civitas-value">{{ number_format($totOrtu) }}</div>
                                 <div class="civitas-caption">
-                                    <span class="civitas-pct text-purple">{{ $pctOrtu }}%</span> akses pendamping
+                                    <span class="civitas-pct text-purple">{{ $rasioPendamping }}%</span> rasio pendampingan siswa
                                 </div>
                             </div>
                         </div>

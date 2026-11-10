@@ -1075,6 +1075,16 @@ body:not(.scp-login-body) {
 }
 
 /* Strict destruction of any oversized SVG chevron/arrow */
+.w-5,
+svg.w-5 {
+    width: 14px !important;
+    max-width: 14px !important;
+}
+.h-5,
+svg.h-5 {
+    height: 14px !important;
+    max-height: 14px !important;
+}
 svg.w-5,
 svg.h-5,
 .pagination svg,
@@ -1086,10 +1096,10 @@ nav[role="navigation"] svg,
 [aria-label*="pagination"] svg,
 [aria-label*="Navigasi"] svg,
 [aria-label*="navigasi"] svg {
-    max-width: 12px !important;
-    max-height: 12px !important;
-    width: 12px !important;
-    height: 12px !important;
+    max-width: 14px !important;
+    max-height: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
     min-width: 0 !important;
     min-height: 0 !important;
     display: inline-block !important;
@@ -1105,6 +1115,10 @@ nav[role="navigation"] > div {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
+}
+nav[role="navigation"] a,
+nav[role="navigation"] span {
+    font-size: 11px !important;
 }
 
 /* Mobile responsive pagination (< 576px) */
