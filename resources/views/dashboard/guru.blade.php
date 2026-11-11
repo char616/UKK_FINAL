@@ -388,9 +388,11 @@
                     <h1 class="page-title">Dashboard Pengajar</h1>
                 </div>
 
-                <div class="academic-badge">
-                    <i class="bi bi-calendar3"></i>
-                    <span>Tahun Ajaran 2026/2027</span>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="academic-badge">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Tahun Ajaran 2026/2027</span>
+                    </div>
                 </div>
             </header>
 

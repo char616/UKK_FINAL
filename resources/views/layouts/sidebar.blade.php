@@ -44,6 +44,7 @@
 
     $menuItems = [
         ['route' => 'schedules.index', 'label' => 'Jadwal Pelajaran', 'icon' => 'bi-calendar-week', 'roles' => ['waka', 'guru', 'wali_kelas', 'siswa', 'orang_tua']],
+        ['route' => 'schedules.generate', 'label' => 'Cetak Jadwal', 'icon' => 'bi-printer', 'roles' => ['waka', 'guru', 'wali_kelas']],
         ['route' => 'journals.index', 'label' => 'Jurnal Mengajar', 'icon' => 'bi-journal-text', 'roles' => ['waka']],
         ['route' => 'master-data.index', 'label' => 'Manajemen Data', 'icon' => 'bi-folder2-open', 'roles' => ['waka']],
         ['route' => 'audit-logs.index', 'label' => 'Audit Log', 'icon' => 'bi-shield-check', 'roles' => ['waka']],
@@ -970,6 +971,11 @@
         border-top: 1px solid #edf1f6 !important;
     }
 
+    .scp-global-notifications {
+        display: inline-flex;
+        flex: 0 0 auto;
+    }
+
     .scp-sidebar .scp-logout-link {
         color: #b54747 !important;
     }
@@ -1260,8 +1266,33 @@
     @endif
 </aside>
 
+@if($currentUser)
+    <div class="scp-global-notifications" aria-label="Notifikasi pengguna">
+        @include('layouts.topbar-notifications')
+    </div>
+@endif
+
 <script>
     (function () {
+        const initGlobalNotifications = () => {
+            const notificationContainer = document.querySelector('.scp-global-notifications');
+            const pageHeader = document.querySelector('header.page-header');
+
+            if (!notificationContainer || !pageHeader) {
+                return;
+            }
+
+            const headerActions = pageHeader.querySelector(':scope > div:last-child');
+
+            if (headerActions && headerActions !== pageHeader.firstElementChild) {
+                headerActions.append(notificationContainer);
+
+                return;
+            }
+
+            pageHeader.append(notificationContainer);
+        };
+
         const initScpSidebar = () => {
             const sidebar = document.querySelector('[data-scp-sidebar]');
             const backdrop = document.querySelector('[data-scp-sidebar-backdrop]');
@@ -1332,8 +1363,12 @@
         };
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initScpSidebar);
+            document.addEventListener('DOMContentLoaded', () => {
+                initGlobalNotifications();
+                initScpSidebar();
+            });
         } else {
+            initGlobalNotifications();
             initScpSidebar();
         }
     })();

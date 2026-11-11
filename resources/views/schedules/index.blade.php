@@ -425,8 +425,11 @@
                             </p>
                         </div>
                     </div>
-                    @if($user->role->name === 'waka')
-                        <div class="d-flex flex-wrap gap-2 align-items-end">
+                    <div class="d-flex flex-wrap gap-2 align-items-end">
+                        <a href="{{ route('schedules.generate') }}" class="btn btn-sm btn-primary fw-bold px-3 py-1.5 rounded-3 d-inline-flex align-items-center gap-1 shadow-sm">
+                            <i class="bi bi-printer-fill"></i> Cetak Format Jadwal
+                        </a>
+                        @if($user->role->name === 'waka')
                             <form action="{{ route('schedules.update-active-round') }}" method="POST" class="d-flex flex-wrap align-items-end gap-2 mb-0">
                                 @csrf
                                 @method('PUT')
@@ -445,8 +448,8 @@
                                     {{ $scheduleLock?->is_locked ? '🔓 Buka Kunci Jadwal' : '🔒 Kunci Jadwal' }}
                                 </button>
                             </form>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
 
                 <div class="alert alert-info py-2.5 px-3 mb-3 small d-flex align-items-center gap-2 border-0 rounded-3" style="background: #eff6ff; color: #174ea6;">

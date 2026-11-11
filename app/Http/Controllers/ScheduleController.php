@@ -353,4 +353,307 @@ class ScheduleController extends Controller
             $newStatus ? 'Jadwal pelajaran berhasil dikunci.' : 'Kunci jadwal pelajaran berhasil dibuka.'
         );
     }
+
+    /**
+     * Tampilan Generate & Cetak Jadwal Pelajaran Terstruktur untuk Waka & Pengajar
+     */
+    public function generate(Request $request): View
+    {
+        $user = Auth::user();
+        $roleName = $user->role?->name ?? '';
+        $activeRound = Cycle::current()->active_round;
+
+        // Ambil daftar kelas yang dapat diakses pengguna
+        if ($roleName === 'wali_kelas') {
+            $classes = $user->homeroomClasses()->with('major')->orderBy('name')->get();
+        } elseif ($roleName === 'guru') {
+            $taughtClassIds = Schedule::where('teacher_id', $user->id)
+                ->where('round', $activeRound)
+                ->pluck('class_id')
+                ->unique()
+                ->all();
+            $classes = Classes::with('major')->whereIn('id', $taughtClassIds)->orderBy('name')->get();
+            if ($classes->isEmpty()) {
+                $classes = Classes::with('major')->orderBy('name')->get();
+            }
+        } else {
+            // Waka, BK, Administrator: seluruh kelas sekolah
+            $classes = Classes::with(['major', 'homeroomTeacher'])->orderBy('name')->get();
+        }
+
+        // Default: 'all' (Semua Kelas) agar langsung menampilkan jadwal seluruh kelas
+        $selectedClassId = $request->query('class_id', 'all');
+        $selectedRound = (int) $request->query('round', $activeRound);
+        $schoolName = $request->query('school_name', config('app.name', 'SMK Negeri 1 Bantul'));
+        $academicYear = $request->query('academic_year', 'Tahun Ajaran 2025/2026');
+        $showTeacher = $request->boolean('show_teacher', true);
+        $showRoom = $request->boolean('show_room', true);
+
+        // Hari resmi sekolah sesuai JamPelajaranSeeder: Senin s/d Jumat
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+        // Kumpulan kelas yang akan digenerate
+        if ($selectedClassId === 'all' || empty($selectedClassId)) {
+            $targetClasses = $classes;
+        } else {
+            $foundClass = $classes->firstWhere('id', (int) $selectedClassId) ?? Classes::with(['major', 'homeroomTeacher'])->find($selectedClassId);
+            $targetClasses = $foundClass ? collect([$foundClass]) : $classes;
+        }
+
+        $gridByClass = [];
+        foreach ($targetClasses as $targetClass) {
+            $schedules = Schedule::with(['subject', 'teacher', 'room', 'jamPelajaran'])
+                ->where('class_id', $targetClass->id)
+                ->where('round', $selectedRound)
+                ->get();
+
+            $gridByClass[$targetClass->id] = $this->buildScheduleGrid(
+                $targetClass,
+                $schedules,
+                $days
+            );
+        }
+
+        return view('schedules.generate', compact(
+            'user',
+            'roleName',
+            'classes',
+            'targetClasses',
+            'selectedClassId',
+            'selectedRound',
+            'activeRound',
+            'days',
+            'schoolName',
+            'academicYear',
+            'showTeacher',
+            'showRoom',
+            'gridByClass'
+        ));
+    }
+
+    /**
+     * Dapatkan sesi resmi jam pelajaran per hari sesuai JamPelajaranSeeder
+     */
+    private function getOfficialSessionsForDay(string $day): array
+    {
+        return match ($day) {
+            'Senin' => [
+                ['nama_sesi' => 'Upacara', 'jam_mulai' => '07:00', 'jam_selesai' => '08:00', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 1', 'jam_mulai' => '08:00', 'jam_selesai' => '08:35', 'is_istirahat' => false, 'jam_ke' => 1],
+                ['nama_sesi' => 'Jam 2', 'jam_mulai' => '08:35', 'jam_selesai' => '09:10', 'is_istirahat' => false, 'jam_ke' => 2],
+                ['nama_sesi' => 'Jam 3', 'jam_mulai' => '09:10', 'jam_selesai' => '09:45', 'is_istirahat' => false, 'jam_ke' => 3],
+                ['nama_sesi' => 'Istirahat I', 'jam_mulai' => '09:45', 'jam_selesai' => '10:00', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 4', 'jam_mulai' => '10:00', 'jam_selesai' => '10:35', 'is_istirahat' => false, 'jam_ke' => 4],
+                ['nama_sesi' => 'Jam 5', 'jam_mulai' => '10:35', 'jam_selesai' => '11:10', 'is_istirahat' => false, 'jam_ke' => 5],
+                ['nama_sesi' => 'Jam 6', 'jam_mulai' => '11:10', 'jam_selesai' => '11:45', 'is_istirahat' => false, 'jam_ke' => 6],
+                ['nama_sesi' => 'Istirahat II', 'jam_mulai' => '11:45', 'jam_selesai' => '12:45', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 7', 'jam_mulai' => '12:45', 'jam_selesai' => '13:25', 'is_istirahat' => false, 'jam_ke' => 7],
+                ['nama_sesi' => 'Jam 8', 'jam_mulai' => '13:25', 'jam_selesai' => '14:00', 'is_istirahat' => false, 'jam_ke' => 8],
+                ['nama_sesi' => 'Jam 9', 'jam_mulai' => '14:00', 'jam_selesai' => '14:35', 'is_istirahat' => false, 'jam_ke' => 9],
+                ['nama_sesi' => 'Jam 10', 'jam_mulai' => '14:35', 'jam_selesai' => '15:10', 'is_istirahat' => false, 'jam_ke' => 10],
+            ],
+            'Selasa' => [
+                ['nama_sesi' => 'Literasi', 'jam_mulai' => '07:00', 'jam_selesai' => '07:30', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 1', 'jam_mulai' => '07:30', 'jam_selesai' => '08:10', 'is_istirahat' => false, 'jam_ke' => 1],
+                ['nama_sesi' => 'Jam 2', 'jam_mulai' => '08:10', 'jam_selesai' => '08:50', 'is_istirahat' => false, 'jam_ke' => 2],
+                ['nama_sesi' => 'Jam 3', 'jam_mulai' => '08:50', 'jam_selesai' => '09:30', 'is_istirahat' => false, 'jam_ke' => 3],
+                ['nama_sesi' => 'Istirahat I', 'jam_mulai' => '09:30', 'jam_selesai' => '09:45', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 4', 'jam_mulai' => '09:45', 'jam_selesai' => '10:25', 'is_istirahat' => false, 'jam_ke' => 4],
+                ['nama_sesi' => 'Jam 5', 'jam_mulai' => '10:25', 'jam_selesai' => '11:05', 'is_istirahat' => false, 'jam_ke' => 5],
+                ['nama_sesi' => 'Jam 6', 'jam_mulai' => '11:05', 'jam_selesai' => '11:45', 'is_istirahat' => false, 'jam_ke' => 6],
+                ['nama_sesi' => 'Istirahat II', 'jam_mulai' => '11:45', 'jam_selesai' => '12:45', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 7', 'jam_mulai' => '12:45', 'jam_selesai' => '13:25', 'is_istirahat' => false, 'jam_ke' => 7],
+                ['nama_sesi' => 'Jam 8', 'jam_mulai' => '13:25', 'jam_selesai' => '14:00', 'is_istirahat' => false, 'jam_ke' => 8],
+                ['nama_sesi' => 'Jam 9', 'jam_mulai' => '14:00', 'jam_selesai' => '14:35', 'is_istirahat' => false, 'jam_ke' => 9],
+                ['nama_sesi' => 'Jam 10', 'jam_mulai' => '14:35', 'jam_selesai' => '15:10', 'is_istirahat' => false, 'jam_ke' => 10],
+            ],
+            'Rabu', 'Kamis' => [
+                ['nama_sesi' => 'Jam 1', 'jam_mulai' => '07:15', 'jam_selesai' => '07:55', 'is_istirahat' => false, 'jam_ke' => 1],
+                ['nama_sesi' => 'Jam 2', 'jam_mulai' => '07:55', 'jam_selesai' => '08:35', 'is_istirahat' => false, 'jam_ke' => 2],
+                ['nama_sesi' => 'Jam 3', 'jam_mulai' => '08:35', 'jam_selesai' => '09:15', 'is_istirahat' => false, 'jam_ke' => 3],
+                ['nama_sesi' => 'Istirahat I', 'jam_mulai' => '09:15', 'jam_selesai' => '09:30', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 4', 'jam_mulai' => '09:30', 'jam_selesai' => '10:10', 'is_istirahat' => false, 'jam_ke' => 4],
+                ['nama_sesi' => 'Jam 5', 'jam_mulai' => '10:10', 'jam_selesai' => '10:50', 'is_istirahat' => false, 'jam_ke' => 5],
+                ['nama_sesi' => 'Jam 6', 'jam_mulai' => '10:50', 'jam_selesai' => '11:30', 'is_istirahat' => false, 'jam_ke' => 6],
+                ['nama_sesi' => 'Istirahat II', 'jam_mulai' => '11:30', 'jam_selesai' => '12:30', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 7', 'jam_mulai' => '12:30', 'jam_selesai' => '13:10', 'is_istirahat' => false, 'jam_ke' => 7],
+                ['nama_sesi' => 'Jam 8', 'jam_mulai' => '13:10', 'jam_selesai' => '13:50', 'is_istirahat' => false, 'jam_ke' => 8],
+                ['nama_sesi' => 'Jam 9', 'jam_mulai' => '13:50', 'jam_selesai' => '14:30', 'is_istirahat' => false, 'jam_ke' => 9],
+                ['nama_sesi' => 'Jam 10', 'jam_mulai' => '14:30', 'jam_selesai' => '15:10', 'is_istirahat' => false, 'jam_ke' => 10],
+            ],
+            'Jumat' => [
+                ['nama_sesi' => 'Jam 1', 'jam_mulai' => '07:15', 'jam_selesai' => '07:55', 'is_istirahat' => false, 'jam_ke' => 1],
+                ['nama_sesi' => 'Jam 2', 'jam_mulai' => '07:55', 'jam_selesai' => '08:35', 'is_istirahat' => false, 'jam_ke' => 2],
+                ['nama_sesi' => 'Jam 3', 'jam_mulai' => '08:35', 'jam_selesai' => '09:15', 'is_istirahat' => false, 'jam_ke' => 3],
+                ['nama_sesi' => 'Istirahat I', 'jam_mulai' => '09:15', 'jam_selesai' => '09:30', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 4', 'jam_mulai' => '09:30', 'jam_selesai' => '10:10', 'is_istirahat' => false, 'jam_ke' => 4],
+                ['nama_sesi' => 'Jam 5', 'jam_mulai' => '10:10', 'jam_selesai' => '10:50', 'is_istirahat' => false, 'jam_ke' => 5],
+                ['nama_sesi' => 'Jam 6', 'jam_mulai' => '10:50', 'jam_selesai' => '11:25', 'is_istirahat' => false, 'jam_ke' => 6],
+                ['nama_sesi' => 'Istirahat II', 'jam_mulai' => '11:25', 'jam_selesai' => '12:40', 'is_istirahat' => true, 'jam_ke' => null],
+                ['nama_sesi' => 'Jam 7', 'jam_mulai' => '12:40', 'jam_selesai' => '13:15', 'is_istirahat' => false, 'jam_ke' => 7],
+                ['nama_sesi' => 'Jam 8', 'jam_mulai' => '13:15', 'jam_selesai' => '13:50', 'is_istirahat' => false, 'jam_ke' => 8],
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * Susun baris grid jadwal KBM per kelas secara bersih dan sinkron dengan data
+     */
+    private function buildScheduleGrid(
+        Classes $class,
+        $schedules,
+        array $days
+    ): array {
+        // Master alur sesi sekolah: Pembiasaan, Jam 1-3, Istirahat I, Jam 4-6, Istirahat II, Jam 7-10
+        $masterStructure = [
+            [
+                'type' => 'pembiasaan',
+                'label' => 'Pembiasaan',
+                'jam_ke' => null,
+                'is_break' => false,
+            ],
+            ['type' => 'kbm', 'label' => 'Jam Ke-1', 'sesi_name' => 'Jam 1', 'jam_ke' => 1, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-2', 'sesi_name' => 'Jam 2', 'jam_ke' => 2, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-3', 'sesi_name' => 'Jam 3', 'jam_ke' => 3, 'is_break' => false],
+            [
+                'type' => 'istirahat',
+                'label' => 'Istirahat I',
+                'jam_ke' => null,
+                'is_break' => true,
+                'break_text' => 'ISTIRAHAT I',
+            ],
+            ['type' => 'kbm', 'label' => 'Jam Ke-4', 'sesi_name' => 'Jam 4', 'jam_ke' => 4, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-5', 'sesi_name' => 'Jam 5', 'jam_ke' => 5, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-6', 'sesi_name' => 'Jam 6', 'jam_ke' => 6, 'is_break' => false],
+            [
+                'type' => 'istirahat',
+                'label' => 'Istirahat II',
+                'jam_ke' => null,
+                'is_break' => true,
+                'break_text' => 'ISTIRAHAT II (SHOLAT & MAKAN SIANG)',
+            ],
+            ['type' => 'kbm', 'label' => 'Jam Ke-7', 'sesi_name' => 'Jam 7', 'jam_ke' => 7, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-8', 'sesi_name' => 'Jam 8', 'jam_ke' => 8, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-9', 'sesi_name' => 'Jam 9', 'jam_ke' => 9, 'is_break' => false],
+            ['type' => 'kbm', 'label' => 'Jam Ke-10', 'sesi_name' => 'Jam 10', 'jam_ke' => 10, 'is_break' => false],
+        ];
+
+        // Cache sesi per hari
+        $dayOfficialSessions = [];
+        foreach ($days as $day) {
+            $dayOfficialSessions[$day] = $this->getOfficialSessionsForDay($day);
+        }
+
+        $rows = [];
+        $totalSchedulesCount = $schedules->count();
+
+        foreach ($masterStructure as $item) {
+            if ($item['is_break']) {
+                $rows[] = [
+                    'label' => $item['label'],
+                    'jam_ke' => null,
+                    'is_break' => true,
+                    'break_text' => $item['break_text'],
+                    'cells' => [],
+                ];
+                continue;
+            }
+
+            $rowCells = [];
+
+            foreach ($days as $day) {
+                $sessionsForThisDay = $dayOfficialSessions[$day] ?? [];
+
+                // 1. Baris Pembiasaan (Senin: Upacara, Selasa: Literasi)
+                if ($item['type'] === 'pembiasaan') {
+                    if ($day === 'Senin') {
+                        $rowCells[$day] = [
+                            'type' => 'special',
+                            'subject' => 'Upacara Bendera',
+                            'time' => '07:00 - 08:00',
+                            'teacher' => 'Seluruh Guru & Siswa',
+                            'room' => 'Lapangan Utama',
+                        ];
+                    } elseif ($day === 'Selasa') {
+                        $rowCells[$day] = [
+                            'type' => 'special',
+                            'subject' => 'Literasi & Pembiasaan',
+                            'time' => '07:00 - 07:30',
+                            'teacher' => 'Wali Kelas',
+                            'room' => 'Ruang Kelas',
+                        ];
+                    } else {
+                        $rowCells[$day] = [
+                            'type' => 'empty',
+                            'subject' => '',
+                            'time' => '-',
+                        ];
+                    }
+                    continue;
+                }
+
+                // 2. Baris Jam KBM
+                $sesiName = $item['sesi_name'];
+                $daySession = collect($sessionsForThisDay)->firstWhere('nama_sesi', $sesiName);
+
+                if (! $daySession) {
+                    // Hari Jumat selesai setelah Jam 8
+                    $rowCells[$day] = [
+                        'type' => 'ended',
+                        'subject' => 'KBM Jumat Selesai',
+                        'time' => '-',
+                    ];
+                    continue;
+                }
+
+                $slotStart = $daySession['jam_mulai'];
+                $slotEnd = $daySession['jam_selesai'];
+                $timeSlotStr = $slotStart . ' - ' . $slotEnd;
+
+                // Cari jadwal KBM yang beririsan dengan slot jam hari ini
+                $matched = $schedules->first(function ($s) use ($day, $slotStart, $slotEnd) {
+                    if (strcasecmp((string) $s->day, (string) $day) !== 0) {
+                        return false;
+                    }
+
+                    $start = substr((string) $s->start_time, 0, 5);
+                    $end = substr((string) $s->end_time, 0, 5);
+
+                    return ($start < $slotEnd && $end > $slotStart);
+                });
+
+                if ($matched) {
+                    $rowCells[$day] = [
+                        'type' => 'schedule',
+                        'subject' => $matched->subject?->name ?? '-',
+                        'subject_code' => $matched->subject?->code ?? '',
+                        'teacher' => $matched->teacher?->name ?? '',
+                        'room' => $matched->room?->name ?? '',
+                        'time' => $timeSlotStr,
+                    ];
+                } else {
+                    $rowCells[$day] = [
+                        'type' => 'empty',
+                        'subject' => '',
+                        'time' => $timeSlotStr,
+                    ];
+                }
+            }
+
+            $rows[] = [
+                'label' => $item['label'],
+                'jam_ke' => $item['jam_ke'],
+                'type' => $item['type'],
+                'is_break' => false,
+                'cells' => $rowCells,
+            ];
+        }
+
+        return [
+            'class' => $class,
+            'rows' => $rows,
+            'schedule_count' => $totalSchedulesCount,
+        ];
+    }
 }

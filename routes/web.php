@@ -81,6 +81,9 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
     Route::put('/master-data/classes/{class}/homeroom-teacher', [MasterDataController::class, 'updateHomeroomTeacher'])->middleware('role:waka')->name('master-data.classes.homeroom-teacher');
 
     // Rute Jadwal Mengajar & Lock Schedule (Waka & Guru)
+    Route::get('/schedules/generate', [ScheduleController::class, 'generate'])
+        ->middleware('role:waka,guru,wali_kelas')
+        ->name('schedules.generate');
     Route::get('/schedules', [ScheduleController::class, 'index'])
         ->middleware('role:waka,guru,wali_kelas,siswa,orang_tua')
         ->name('schedules.index');
@@ -119,6 +122,8 @@ Route::middleware(['auth', 'active', 'password.changed'])->group(function () {
 
     // Rute Notifikasi Pengguna
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{notification}/go', [NotificationController::class, 'goToTarget'])->name('notifications.go');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
 
     // Rute Audit Log (Hanya untuk WAKA)
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware('role:waka')->name('audit-logs.index');
