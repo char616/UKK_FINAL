@@ -1,8 +1,8 @@
 @php
     $currentUser = auth()->user();
     $roleName = $currentUser?->role?->name ?? '';
-    $unreadNotifCount = $currentUser ? $currentUser->notifications()->where('is_read', false)->count() : 0;
-    $latestNotifications = $currentUser ? $currentUser->notifications()->latest()->take(5)->get() : collect();
+    $unreadNotifCount = $currentUser ? $currentUser->notifications()->visibleToRole($roleName)->where('is_read', false)->count() : 0;
+    $latestNotifications = $currentUser ? $currentUser->notifications()->visibleToRole($roleName)->latest()->take(5)->get() : collect();
 @endphp
 
 <div class="d-inline-flex align-items-center gap-2 topbar-notification-container">

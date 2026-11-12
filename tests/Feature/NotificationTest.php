@@ -80,4 +80,38 @@ class NotificationTest extends TestCase
             ->assertOk()
             ->assertSee('Notifikasi pertama');
     }
+
+    public function test_role_specific_schedule_notifications_are_not_sent_or_shown_to_other_roles(): void
+    {
+        $studentRole = Role::create(['name' => 'siswa', 'display_name' => 'Siswa']);
+        $student = User::create([
+            'login_key' => 'SISWA-ROLE-TEST',
+            'name' => 'Siswa Role Tes',
+            'email' => 'siswa-role@example.test',
+            'password' => 'password',
+            'role_id' => $studentRole->id,
+            'is_active' => true,
+        ]);
+
+        $this->assertNull(Notification::send(
+            $student->id,
+            'Putaran Jadwal Sekolah Diperbarui',
+            'WAKA menetapkan Putaran 1 sebagai putaran jadwal aktif sekolah.'
+        ));
+        $this->assertDatabaseMissing('notifications', [
+            'user_id' => $student->id,
+            'title' => 'Putaran Jadwal Sekolah Diperbarui',
+        ]);
+
+        $oldWrongNotification = Notification::create([
+            'user_id' => $student->id,
+            'title' => 'Pengajuan Jadwal Guru',
+            'message' => 'Notifikasi jadwal khusus Waka.',
+        ]);
+
+        $this->actingAs($student)
+            ->get(route('notifications.index'))
+            ->assertOk()
+            ->assertDontSee($oldWrongNotification->message);
+    }
 }

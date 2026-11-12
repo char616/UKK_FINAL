@@ -4,10 +4,49 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Notification extends Model
 {
+    /**
+     * Role yang boleh menerima notifikasi berdasarkan jenis notifikasinya.
+     * Notifikasi yang tidak tercantum tetap bersifat umum.
+     *
+     * @var array<string, array<int, string>>
+     */
+    private const ROLE_AUDIENCES = [
+        'Pengajuan Jadwal Guru' => ['waka'],
+        'Putaran Jadwal Sekolah Diperbarui' => ['guru'],
+        'Pengingat Jurnal Mengajar' => ['guru'],
+        'Pengingat KBM: Isi Jurnal & Presensi' => ['guru'],
+        'Pengajuan Izin Jam Pelajaran Baru' => ['bk'],
+        'Pengajuan Izin Baru' => ['wali_kelas'],
+        'Status Izin Diperbarui' => ['siswa', 'orang_tua'],
+        'Informasi Presensi' => ['siswa'],
+    ];
+
     protected $guarded = ['id'];
+
+    public function scopeVisibleToRole(Builder $query, string $roleName): Builder
+    {
+        $restrictedTitles = array_keys(self::ROLE_AUDIENCES);
+        $allowedTitles = collect(self::ROLE_AUDIENCES)
+            ->filter(fn (array $roles): bool => in_array($roleName, $roles, true))
+            ->keys()
+            ->all();
+
+        return $query->where(function (Builder $notificationQuery) use ($restrictedTitles, $allowedTitles): void {
+            $notificationQuery
+                ->whereNotIn('title', $restrictedTitles)
+                ->when($allowedTitles !== [], fn (Builder $allowedQuery): Builder => $allowedQuery->orWhereIn('title', $allowedTitles));
+        });
+    }
+
+    public function isVisibleToRole(string $roleName): bool
+    {
+        return ! array_key_exists($this->title, self::ROLE_AUDIENCES)
+            || in_array($roleName, self::ROLE_AUDIENCES[$this->title], true);
+    }
 
     public function user(): BelongsTo
     {
@@ -103,10 +142,15 @@ class Notification extends Model
         return 'bi-bell text-primary';
     }
 
-    public static function send(int $userId, string $title, string $message): self
+    public static function send(int $userId, string $title, string $message): ?self
     {
+        $user = User::with('role')->find($userId);
+        if (! $user || ! (new self(['title' => $title]))->isVisibleToRole($user->role?->name ?? '')) {
+            return null;
+        }
+
         return self::create([
-            'user_id' => $userId,
+            'user_id' => $user->id,
             'title' => $title,
             'message' => $message,
         ]);

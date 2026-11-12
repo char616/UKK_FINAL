@@ -8,6 +8,7 @@ use App\Models\Cycle;
 use App\Models\JamPelajaran;
 use App\Models\LeaveRequest;
 use App\Models\Major;
+use App\Models\Notification;
 use App\Models\Role;
 use App\Models\Room;
 use App\Models\Schedule;
@@ -381,6 +382,48 @@ class RevisionsFeatureTest extends TestCase
     {
         $this->artisan('teaching:send-reminders')
             ->assertSuccessful();
+    }
+
+    public function test_teaching_reminder_is_sent_automatically_to_teacher_thirty_minutes_before_lesson_ends(): void
+    {
+        $teacher = User::whereHas('role', fn ($query) => $query->where('name', 'guru'))->firstOrFail();
+        $class = Classes::firstOrFail();
+        $subject = Subject::firstOrFail();
+        $schedule = Schedule::create([
+            'teacher_id' => $teacher->id,
+            'class_id' => $class->id,
+            'subject_id' => $subject->id,
+            'room_id' => $this->getOrCreateRoom()->id,
+            'day' => 'Senin',
+            'start_time' => '08:00:00',
+            'end_time' => '09:00:00',
+            'round' => Cycle::current()->active_round,
+        ]);
+        $waka = User::whereHas('role', fn ($query) => $query->where('name', 'waka'))->firstOrFail();
+
+        $this->travelTo('2026-10-26 08:29:00');
+        $this->artisan('teaching:send-reminders')->assertSuccessful();
+        $this->assertDatabaseCount('notifications', 0);
+
+        $this->travelTo('2026-10-26 08:30:00');
+        $this->artisan('teaching:send-reminders')->assertSuccessful();
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $teacher->id,
+            'title' => 'Pengingat KBM: Isi Jurnal & Presensi',
+        ]);
+        $this->assertTrue(
+            Notification::where('user_id', $teacher->id)
+                ->where('message', 'like', "%[jadwal #{$schedule->id}]%")
+                ->exists()
+        );
+        $this->assertDatabaseCount('notifications', 1);
+
+        $this->artisan('teaching:send-reminders')->assertSuccessful();
+        $this->assertDatabaseCount('notifications', 1);
+        $this->assertDatabaseMissing('notifications', [
+            'user_id' => $waka->id,
+        ]);
     }
 
     public function test_student_and_parent_can_only_view_their_own_class_schedules(): void

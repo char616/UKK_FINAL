@@ -1218,6 +1218,33 @@ class SchoolWorkflowTest extends TestCase
             ->assertSessionHasErrors('login_key');
     }
 
+    public function test_teacher_can_generate_only_their_own_teaching_schedule(): void
+    {
+        $teacher = $this->createUser('guru');
+        $otherTeacher = $this->createUser('guru');
+        $ownSchedule = $this->createScheduleData($teacher);
+        $otherSchedule = $this->createScheduleData($otherTeacher);
+
+        $response = $this->actingAs($teacher)->get(route('schedules.generate', [
+            'class_id' => 'all',
+            'round' => 1,
+        ]));
+
+        $response->assertOk()
+            ->assertSee($ownSchedule['subject']->name)
+            ->assertDontSee($otherSchedule['subject']->name)
+            ->assertDontSee($otherSchedule['class']->name);
+
+        $this->actingAs($teacher)
+            ->get(route('schedules.generate', [
+                'class_id' => $otherSchedule['class']->id,
+                'round' => 1,
+            ]))
+            ->assertOk()
+            ->assertSee($ownSchedule['subject']->name)
+            ->assertDontSee($otherSchedule['subject']->name);
+    }
+
     private function createUser(string $roleName, bool $active = true): User
     {
         $role = Role::firstOrCreate(

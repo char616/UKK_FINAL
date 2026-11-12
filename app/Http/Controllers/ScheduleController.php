@@ -362,20 +362,18 @@ class ScheduleController extends Controller
         $user = Auth::user();
         $roleName = $user->role?->name ?? '';
         $activeRound = Cycle::current()->active_round;
+        $selectedRound = (int) $request->query('round', $activeRound);
 
         // Ambil daftar kelas yang dapat diakses pengguna
         if ($roleName === 'wali_kelas') {
             $classes = $user->homeroomClasses()->with('major')->orderBy('name')->get();
         } elseif ($roleName === 'guru') {
             $taughtClassIds = Schedule::where('teacher_id', $user->id)
-                ->where('round', $activeRound)
+                ->where('round', $selectedRound)
                 ->pluck('class_id')
                 ->unique()
                 ->all();
             $classes = Classes::with('major')->whereIn('id', $taughtClassIds)->orderBy('name')->get();
-            if ($classes->isEmpty()) {
-                $classes = Classes::with('major')->orderBy('name')->get();
-            }
         } else {
             // Waka, BK, Administrator: seluruh kelas sekolah
             $classes = Classes::with(['major', 'homeroomTeacher'])->orderBy('name')->get();
@@ -383,8 +381,7 @@ class ScheduleController extends Controller
 
         // Default: 'all' (Semua Kelas) agar langsung menampilkan jadwal seluruh kelas
         $selectedClassId = $request->query('class_id', 'all');
-        $selectedRound = (int) $request->query('round', $activeRound);
-        $schoolName = $request->query('school_name', config('app.name', 'SMK Negeri 1 Bantul'));
+        $schoolName = $request->query('school_name', 'SMKN 1 Bantul');
         $academicYear = $request->query('academic_year', 'Tahun Ajaran 2025/2026');
         $showTeacher = $request->boolean('show_teacher', true);
         $showRoom = $request->boolean('show_room', true);
@@ -396,7 +393,7 @@ class ScheduleController extends Controller
         if ($selectedClassId === 'all' || empty($selectedClassId)) {
             $targetClasses = $classes;
         } else {
-            $foundClass = $classes->firstWhere('id', (int) $selectedClassId) ?? Classes::with(['major', 'homeroomTeacher'])->find($selectedClassId);
+            $foundClass = $classes->firstWhere('id', (int) $selectedClassId);
             $targetClasses = $foundClass ? collect([$foundClass]) : $classes;
         }
 
@@ -405,6 +402,7 @@ class ScheduleController extends Controller
             $schedules = Schedule::with(['subject', 'teacher', 'room', 'jamPelajaran'])
                 ->where('class_id', $targetClass->id)
                 ->where('round', $selectedRound)
+                ->when($roleName === 'guru', fn ($query) => $query->where('teacher_id', $user->id))
                 ->get();
 
             $gridByClass[$targetClass->id] = $this->buildScheduleGrid(

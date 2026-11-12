@@ -13,8 +13,8 @@ class NotificationController extends Controller
         $user = auth()->user();
         $roleName = $user->role?->name ?? '';
 
-        $notifications = $user->notifications()->latest()->paginate(25);
-        $unreadCount = $user->notifications()->where('is_read', false)->count();
+        $notifications = $user->notifications()->visibleToRole($roleName)->latest()->paginate(25);
+        $unreadCount = $user->notifications()->visibleToRole($roleName)->where('is_read', false)->count();
 
         return view('notifications.index', compact('notifications', 'user', 'roleName', 'unreadCount'));
     }
@@ -27,7 +27,7 @@ class NotificationController extends Controller
         $user = auth()->user();
 
         // Pastikan hanya pemilik notifikasi yang dapat membuka
-        if ($notification->user_id !== $user->id) {
+        if ($notification->user_id !== $user->id || ! $notification->isVisibleToRole($user->role?->name ?? '')) {
             abort(403, 'Akses notifikasi tidak diizinkan.');
         }
 
@@ -45,7 +45,11 @@ class NotificationController extends Controller
      */
     public function markAllRead(): RedirectResponse
     {
-        auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
+        $user = auth()->user();
+        $user->notifications()
+            ->visibleToRole($user->role?->name ?? '')
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
         return back()->with('success', 'Semua notifikasi telah ditandai sebagai dibaca.');
     }
